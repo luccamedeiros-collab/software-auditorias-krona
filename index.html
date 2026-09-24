@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SaaS de Auditoria Logística (Sem Node)</title>
+  
+  <!-- 1. Tailwind CSS via CDN (Estilização) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- 2. Supabase Client via CDN (Conexão direta com o Banco/Storage) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-100 font-sans p-6">
+
+  <div class="max-w-5xl mx-auto space-y-8">
+    
+    <!-- CABEÇALHO -->
+    <header class="bg-slate-900 text-white p-6 rounded-xl shadow-lg flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold">Sistema de Auditoria Logística</h1>
+        <p class="text-slate-400 text-sm">Painel do Auditor e Indicadores de Qualidade</p>
+      </div>
+      <button onclick="carregarDashboard()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded font-semibold text-sm transition">
+        🔄 Atualizar Dashboard
+      </button>
+    </header>
+
+    <!-- PAINEL DE INDICADORES (KPIs) -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-sm text-slate-500 font-medium">Score Geral de Qualidade</p>
+        <p id="kpi-score" class="text-4xl font-extrabold text-emerald-600 mt-2">--%</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-sm text-slate-500 font-medium">Auditorias Concluídas</p>
+        <p id="kpi-auditorias" class="text-4xl font-extrabold text-slate-800 mt-2">--</p>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-sm text-slate-500 font-medium">Total de Divergências</p>
+        <p id="kpi-divergencias" class="text-4xl font-extrabold text-rose-600 mt-2">--</p>
+      </div>
+    </section>
+
+    <!-- FORMULÁRIO DE EXECUÇÃO DA AUDITORIA -->
+    <section class="bg-white p-6 rounded-xl shadow-md border border-slate-200 space-y-6">
+      <h2 class="text-xl font-bold text-slate-800 border-b pb-2">Registrar Item de Auditoria</h2>
+      
+      <form id="auditForm" class="space-y-4">
+        <!-- IDs de Contexto -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase">ID da Auditoria (UUID)</label>
+            <input type="text" id="auditoriaId" class="w-full border border-slate-300 p-2 rounded text-sm" placeholder="Cole aqui o UUID da auditoria" required />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase">Plano / Lote Nº</label>
+            <input type="number" id="planoNumero" value="1" class="w-full border border-slate-300 p-2 rounded text-sm" required />
+          </div>
+        </div>
+
+        <!-- Dados do Item -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700">Código do Item</label>
+            <input type="text" id="codigoItem" class="w-full border border-slate-300 p-2 rounded" placeholder="Ex: PROD-123" required />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700">Descrição</label>
+            <input type="text" id="descricaoItem" class="w-full border border-slate-300 p-2 rounded" placeholder="Ex: Caixa de Papelão 20L" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700">Conformidade</label>
+            <select id="conformidade" onchange="toggleDivergenciaSection()" class="w-full border border-slate-300 p-2 rounded bg-white">
+              <option value="conforme">Conforme</option>
+              <option value="nao_conforme">Não Conforme</option>
+              <option value="nao_aplicavel">N/A</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700">Qtd. Esperada</label>
+            <input type="number" id="qtdEsperada" class="w-full border border-slate-300 p-2 rounded" required />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700">Qtd. Contada</label>
+            <input type="number" id="qtdContada" class="w-full border border-slate-300 p-2 rounded" required />
+          </div>
+        </div>
+
+        <!-- ÁREA CONDICIONAL: TRATATIVA DE DIVERGÊNCIA -->
+        <div id="divergenciaArea" class="hidden bg-red-50 p-4 rounded-lg border border-red-200 space-y-4">
+          <h3 class="text-md font-bold text-red-800">Tratativa de Divergência Obrigatória</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700">ID do Motivo</label>
+              <input type="text" id="motivoId" class="w-full border border-slate-300 p-2 rounded bg-white" placeholder="UUID do Motivo" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700">Responsável Operacional</label>
+              <input type="text" id="responsavelNome" class="w-full border border-slate-300 p-2 rounded bg-white" placeholder="Nome do operador" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700">Turno Responsável</label>
+              <select id="turnoResponsavel" class="w-full border border-slate-300 p-2 rounded bg-white">
+                <option value="turno_1">Turno 1</option>
+                <option value="turno_2">Turno 2</option>
+                <option value="turno_3">Turno 3</option>
+                <option value="comercial">Comercial</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700">Foto da Evidência</label>
+              <input type="file" id="fotoEvidencia" accept="image/*" class="w-full text-sm text-slate-500 border p-1 rounded bg-white" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700">Legenda da Imagem</label>
+              <input type="text" id="legendaFoto" class="w-full border border-slate-300 p-2 rounded bg-white" placeholder="Ex: Produto rasgado no palete" />
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="btnSalvar" class="w-full bg-slate-900 text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-800 transition">
+          Salvar Registro de Auditoria
+        </button>
+      </form>
+    </section>
+
+  </div>
+
+  <!-- SCRIPT DE LÓGICA E CONEXÃO -->
+  <script>
+    // 1. CONFUGURAÇÃO DO SUPABASE
+    const SUPABASE_URL = "https://SEU_PROJETO.supabase.co"; // <--- COLOQUE SUA URL
+    const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_AQUI";        // <--- COLOQUE SUA CHAVE ANON
+    
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // 2. EXIBIR/OCULTAR CAMPOS DE DIVERGÊNCIA
+    function toggleDivergenciaSection() {
+      const conformidade = document.getElementById('conformidade').value;
+      const divergenciaArea = document.getElementById('divergenciaArea');
+      if (conformidade === 'nao_conforme') {
+        divergenciaArea.classList.remove('hidden');
+      } else {
+        divergenciaArea.classList.add('hidden');
+      }
+    }
+
+    // 3. CARREGAR INDICADORES DA VIEW SQL
+    async function carregarDashboard() {
+      const { data, error } = await supabaseClient
+        .from('v_kpis_dashboard')
+        .select('*')
+        .maybeSingle();
+
+      if (error) {
+        console.error("Erro ao buscar KPIs:", error);
+        return;
+      }
+
+      if (data) {
+        document.getElementById('kpi-score').innerText = (data.score_medio_qualidade || 0) + '%';
+        document.getElementById('kpi-auditorias').innerText = data.total_auditorias_concluidas || 0;
+        document.getElementById('kpi-divergencias').innerText = data.total_divergencias || 0;
+      }
+    }
+
+    // 4. PROCESSAR O ENVIO DO FORMULÁRIO
+    document.getElementById('auditForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btnSalvar');
+      btn.innerText = "Gravando dados...";
+      btn.disabled = true;
+
+      try {
+        const auditoriaId = document.getElementById('auditoriaId').value;
+        const planoNumero = document.getElementById('planoNumero').value;
+        const codigoItem = document.getElementById('codigoItem').value;
+        const descricao = document.getElementById('descricaoItem').value;
+        const conformidade = document.getElementById('conformidade').value;
+        const qtdEsperada = document.getElementById('qtdEsperada').value;
+        const qtdContada = document.getElementById('qtdContada').value;
+
+        // Step A: Inserir Item
+        const { data: itemData, error: itemError } = await supabaseClient
+          .from('itens_auditoria')
+          .insert([{
+            auditoria_id: auditoriaId,
+            plano_numero: Number(planoNumero),
+            codigo_item: codigoItem,
+            descricao: descricao,
+            quantidade_esperada: Number(qtdEsperada),
+            quantidade_contada: Number(qtdContada),
+            conformidade: conformidade
+          }])
+          .select()
+          .single();
+
+        if (itemError) throw itemError;
+
+        // Step B: Se Não Conforme, cria a Divergência e faz Upload da foto
+        if (conformidade === 'nao_conforme') {
+          const motivoId = document.getElementById('motivoId').value;
+          const responsavelNome = document.getElementById('responsavelNome').value;
+          const turnoResponsavel = document.getElementById('turnoResponsavel').value;
+          const fileInput = document.getElementById('fotoEvidencia');
+          const legenda = document.getElementById('legendaFoto').value;
+
+          const { data: divData, error: divError } = await supabaseClient
+            .from('divergencias')
+            .insert([{
+              item_auditoria_id: itemData.id,
+              auditoria_id: auditoriaId,
+              motivo_id: motivoId,
+              responsavel_nome: responsavelNome,
+              turno_responsavel: turnoResponsavel
+            }])
+            .select()
+            .single();
+
+          if (divError) throw divError;
+
+          // Upload do arquivo para o Bucket
+          if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const filePath = `evidencias/${auditoriaId}/${itemData.id}_${Date.now()}.${file.name.split('.').pop()}`;
+
+            const { error: uploadError } = await supabaseClient.storage
+              .from('evidencias-auditoria')
+              .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: publicUrlData } = supabaseClient.storage
+              .from('evidencias-auditoria')
+              .getPublicUrl(filePath);
+
+            await supabaseClient.from('fotos_evidencias').insert([{
+              auditoria_id: auditoriaId,
+              item_auditoria_id: itemData.id,
+              divergencia_id: divData.id,
+              url_storage: publicUrlData.publicUrl,
+              legenda: legenda
+            }]);
+          }
+        }
+
+        alert('Registro efetuado com sucesso!');
+        document.getElementById('codigoItem').value = '';
+        document.getElementById('descricaoItem').value = '';
+        carregarDashboard(); // Atualiza os números no topo
+
+      } catch (err) {
+        alert('Erro ao salvar: ' + err.message);
+      } finally {
+        btn.innerText = "Salvar Registro de Auditoria";
+        btn.disabled = false;
+      }
+    });
+
+    // Executa ao carregar a página
+    carregarDashboard();
+  </script>
+</body>
+</html>
