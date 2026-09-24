@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Módulo de Auditorias - Grupo Krona</title>
+    <title>SaaS - Gestão & Auditoria Logística Krona</title>
     
     <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -257,387 +257,587 @@
         }
     </style>
 </head>
-<body class="p-4 md:p-6">
+<body class="bg-slate-100 font-sans min-h-screen flex flex-col">
 
-    <!-- BARRA SUPERIOR DE NAVEGAÇÃO -->
-    <header class="max-w-6xl mx-auto mb-6 bg-slate-900 text-white rounded-xl p-4 flex justify-between items-center shadow-lg">
-        <div class="flex items-center space-x-3">
-            <span class="bg-blue-600 text-xs font-bold uppercase px-2 py-1 rounded">Krona Logística</span>
-            <h1 class="text-lg font-bold">Módulo Executivo de Auditorias</h1>
+    <!-- ========================================== -->
+    <!-- MENU DE NAVEGAÇÃO SUPERIOR (5 MÓDULOS)     -->
+    <!-- ========================================== -->
+    <nav class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl font-black text-indigo-400 tracking-wider">LOGI</span>
+                <span class="text-xs uppercase font-bold bg-indigo-900 text-indigo-200 px-2 py-1 rounded border border-indigo-700">Audit SaaS</span>
+            </div>
+
+            <div class="flex space-x-1 overflow-x-auto">
+                <button onclick="navegar('indicadores')" id="btn-indicadores" class="nav-btn px-3 py-2 rounded-md text-sm font-medium bg-slate-800 text-white">
+                    📊 Indicadores
+                </button>
+                <button onclick="navegar('cargas')" id="btn-cargas" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">
+                    🚚 Seleção de Cargas
+                </button>
+                <button onclick="navegar('auditoria')" id="btn-auditoria" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">
+                    📋 Auditoria
+                </button>
+                <button onclick="navegar('divergencias')" id="btn-divergencias" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">
+                    ⚠️ Divergências
+                </button>
+                <button onclick="navegar('configuracoes')" id="btn-configuracoes" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">
+                    ⚙️ Configurações
+                </button>
+            </div>
         </div>
-        <div class="flex space-x-2">
-            <button onclick="exibirTela('lista')" id="btnNavLista" class="px-4 py-2 text-sm font-semibold rounded-lg bg-blue-700 text-white">
-                📋 Historico de Auditorias
-            </button>
-            <button onclick="exibirTela('formulario')" id="btnNavNova" class="px-4 py-2 text-sm font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition">
-                ➕ Nova Auditoria
-            </button>
-        </div>
-    </header>
+    </nav>
 
-    <main class="max-w-6xl mx-auto">
+    <!-- ========================================== -->
+    <!-- CONTAINER DOS MÓDULOS                      -->
+    <!-- ========================================== -->
+    <main class="max-w-7xl mx-auto p-4 md:p-6 w-full flex-grow">
 
-        <!-- ======================================================== -->
-        <!-- TELA 1: LISTA / HISTÓRICO DE AUDITORIAS REALIZADAS        -->
-        <!-- ======================================================== -->
-        <section id="telaListaAuditorias" class="space-y-6">
-            
-            <!-- Cards de Resumo Rápidos -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-xs font-bold text-slate-400 uppercase">Total de Auditorias</span>
-                    <p id="totalAuditoriasCard" class="text-3xl font-black text-slate-800 mt-1">0</p>
+        <!-- -------------------------------------- -->
+        <!-- MÓDULO 1: INDICADORES                  -->
+        <!-- -------------------------------------- -->
+        <section id="mod-indicadores" class="modulo-content space-y-6">
+            <div class="flex justify-between items-center border-b pb-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Dashboard de Qualidade & Performance</h1>
+                    <p class="text-slate-500 text-sm">Visão consolidada de acuracidade e divergências operacionais</p>
                 </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-xs font-bold text-slate-400 uppercase">Score Médio Geral</span>
-                    <p id="scoreMedioCard" class="text-3xl font-black text-emerald-600 mt-1">0%</p>
+                <button onclick="carregarDashboard()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition">
+                    🔄 Atualizar Dados
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <span class="text-sm font-semibold text-slate-500 uppercase">Score Geral de Qualidade</span>
+                    <p id="kpi-score" class="text-5xl font-extrabold text-emerald-600 mt-4">--%</p>
                 </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-xs font-bold text-slate-400 uppercase">Em Andamento</span>
-                    <p id="emAndamentoCard" class="text-3xl font-black text-amber-500 mt-1">0</p>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <span class="text-sm font-semibold text-slate-500 uppercase">Auditorias Concluídas</span>
+                    <p id="kpi-auditorias" class="text-5xl font-extrabold text-slate-800 mt-4">--</p>
                 </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-xs font-bold text-slate-400 uppercase">Com Divergência</span>
-                    <p id="comDivergenciaCard" class="text-3xl font-black text-rose-600 mt-1">0</p>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <span class="text-sm font-semibold text-slate-500 uppercase">Total de Divergências</span>
+                    <p id="kpi-divergencias" class="text-5xl font-extrabold text-rose-600 mt-4">--</p>
                 </div>
             </div>
 
-            <!-- Tabela Principal -->
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-col md:flex-row justify-between gap-4 items-center">
-                    <h2 class="font-bold text-slate-800 text-lg">Auditorias Registradas</h2>
-                    <div class="flex items-center space-x-2 w-full md:w-auto">
-                        <input type="text" id="filtroBusca" onkeyup="filtrarAuditorias()" placeholder="Buscar por Carga, Pedido ou Cliente..." class="border border-slate-300 rounded-lg p-2 text-sm w-full md:w-64">
-                        <button onclick="carregarHistoricoAuditorias()" class="bg-slate-800 text-white p-2 rounded-lg text-sm font-semibold">🔄</button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h2 class="text-lg font-bold text-slate-800">Divergências por Turno</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1 font-medium"><span>Turno 1</span><span id="txt-t1">0</span></div>
+                            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div id="bar-t1" class="bg-indigo-600 h-full w-0 transition-all duration-500"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1 font-medium"><span>Turno 2</span><span id="txt-t2">0</span></div>
+                            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div id="bar-t2" class="bg-indigo-500 h-full w-0 transition-all duration-500"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1 font-medium"><span>Turno 3</span><span id="txt-t3">0</span></div>
+                            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div id="bar-t3" class="bg-indigo-400 h-full w-0 transition-all duration-500"></div></div>
+                        </div>
                     </div>
                 </div>
 
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h2 class="text-lg font-bold text-slate-800">Principais Motivos de Divergência</h2>
+                    <ul id="lista-motivos-kpi" class="divide-y divide-slate-100 text-sm">
+                        <li class="py-2 text-slate-400 italic">Carregando indicadores...</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- -------------------------------------- -->
+        <!-- MÓDULO 2: SELEÇÃO DE CARGAS            -->
+        <!-- -------------------------------------- -->
+        <section id="mod-cargas" class="modulo-content hidden space-y-6">
+            <div class="flex justify-between items-center border-b pb-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Seleção e Cadastro de Cargas</h1>
+                    <p class="text-slate-500 text-sm">Ordens recebidas para direcionamento à bancada de auditoria</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <form id="formCarga" onsubmit="salvarCarga(event)" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h2 class="text-lg font-bold text-slate-800 border-b pb-2">Nova Carga / Ordem</h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Unidade Operacional</label>
+                        <select id="cargaUnidadeId" class="w-full border p-2 rounded-lg bg-white text-sm" required></select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Código da Carga/Ordem</label>
+                        <input type="text" id="codigoCarga" class="w-full border p-2 rounded-lg text-sm" placeholder="Ex: CRG-2026-001" required />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Nota Fiscal</label>
+                        <input type="text" id="notaFiscal" class="w-full border p-2 rounded-lg text-sm" placeholder="Ex: NF-88912" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Transportadora</label>
+                        <input type="text" id="transportadoraCarga" class="w-full border p-2 rounded-lg text-sm" placeholder="Ex: Logística Brasil" />
+                    </div>
+                    <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg text-sm transition">
+                        Cadastrar Carga
+                    </button>
+                </form>
+
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h2 class="text-lg font-bold text-slate-800 border-b pb-2">Cargas Disponíveis</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="border-b bg-slate-50 text-slate-600">
+                                    <th class="p-3">Código</th>
+                                    <th class="p-3">Nota Fiscal</th>
+                                    <th class="p-3">Transportadora</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3 text-right">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-cargas">
+                                <tr><td colspan="5" class="p-4 text-center text-slate-400">Carregando cargas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- -------------------------------------- -->
+        <!-- MÓDULO 3: AUDITORIA (HISTÓRICO + KRONA) -->
+        <!-- -------------------------------------- -->
+        <section id="mod-auditoria" class="modulo-content hidden space-y-6">
+            
+            <!-- VISTA A: LISTA E HISTÓRICO DE AUDITORIAS -->
+            <div id="auditoriaSubLista" class="space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">Execução de Auditorias Logísticas</h1>
+                        <p class="text-slate-500 text-sm">Histórico de verificações realizadas e centro de nova execução</p>
+                    </div>
+                    <button onclick="exibirSubTelaAuditoria('formulario')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md transition flex items-center space-x-2">
+                        <span>➕ Iniciar Nova Auditoria</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Total Realizadas</span>
+                        <p id="totalAuditoriasCard" class="text-3xl font-black text-slate-800 mt-1">0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Score Médio</span>
+                        <p id="scoreMedioCard" class="text-3xl font-black text-emerald-600 mt-1">100%</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Em Andamento</span>
+                        <p id="emAndamentoCard" class="text-3xl font-black text-amber-500 mt-1">0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Com Divergência</span>
+                        <p id="comDivergenciaCard" class="text-3xl font-black text-rose-600 mt-1">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-col md:flex-row justify-between gap-4 items-center">
+                        <h2 class="font-bold text-slate-800 text-lg">Histórico de Auditorias</h2>
+                        <div class="flex items-center space-x-2 w-full md:w-auto">
+                            <input type="text" id="filtroBusca" onkeyup="filtrarAuditorias()" placeholder="Buscar por Carga, Pedido ou Cliente..." class="border border-slate-300 rounded-lg p-2 text-sm w-full md:w-64">
+                            <button onclick="carregarHistoricoAuditorias()" class="bg-slate-800 text-white p-2 rounded-lg text-sm font-semibold">🔄</button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                    <th class="p-3">ID Auditoria</th>
+                                    <th class="p-3">Data</th>
+                                    <th class="p-3">Carga / Pedido</th>
+                                    <th class="p-3">Cliente</th>
+                                    <th class="p-3">Tipo / Unidade</th>
+                                    <th class="p-3">Auditor</th>
+                                    <th class="p-3">Score</th>
+                                    <th class="p-3 text-right">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaAuditoriasBody" class="divide-y divide-slate-200">
+                                <tr>
+                                    <td colspan="8" class="p-6 text-center text-slate-400">Carregando lista de auditorias...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VISTA B: EXECUÇÃO DO FORMULÁRIO DE AUDITORIA (GRUPO KRONA) -->
+            <div id="auditoriaSubForm" class="hidden space-y-4">
+                <div class="flex justify-between items-center">
+                    <button onclick="exibirSubTelaAuditoria('lista')" class="text-sm font-bold text-slate-600 hover:text-slate-900 flex items-center space-x-1">
+                        <span>← Voltar para o Histórico de Auditorias</span>
+                    </button>
+                </div>
+
+                <div class="container mx-auto max-w-4xl bg-white rounded-xl shadow-xl overflow-hidden border border-slate-200 mb-10">
+                    <div class="header-krona">
+                        <h1 class="text-2xl font-bold">Plano de Auditoria - Embarque - Conexões</h1>
+                        <p class="text-sm opacity-90">Registro de auditoria de qualidade nos processos de checkout e embarque de cargas</p>
+                    </div>
+
+                    <div class="draft-banner m-4" id="draftBanner" style="display: none;">
+                        <div>
+                            <strong class="text-blue-900">📥 Auditoria em andamento restaurada</strong>
+                            <div class="text-xs text-slate-600 mt-1" id="draftBannerText"></div>
+                        </div>
+                        <button type="button" class="btn-clear-draft text-xs border border-red-300 text-red-600 px-3 py-1 rounded bg-white hover:bg-red-50" onclick="limparRascunho()">🗑 Descartar e começar do zero</button>
+                    </div>
+
+                    <div id="pendentesNuvemContainer" class="p-4" style="display:none;"></div>
+
+                    <div class="audit-tracker-bar">
+                        <div>ID Auditoria: <span id="auditIdDisplay" class="tracker-badge">---</span></div>
+                        <div class="tracker-controls">
+                            <button type="button" id="btnStartAudit" class="btn-start-audit" onclick="startAudit()">▶ Iniciar Auditoria</button>
+                            <button type="button" id="btnSalvarNuvem" onclick="salvarProgressoNaNuvem()" class="text-xs bg-blue-600 text-white px-3 py-1 rounded" style="display:none;">☁ Salvar na nuvem</button>
+                            <div>Tempo: <span id="timerDisplay" class="timer-badge">00:00:00</span></div>
+                        </div>
+                    </div>
+                    <div id="statusNuvemMsg" class="px-6 text-xs mt-1"></div>
+
+                    <form id="auditForm" class="p-6 md:p-8">
+                        <input type="hidden" id="auditId" name="auditId">
+                        <input type="hidden" id="tempoTotal" name="tempoTotal">
+                        <input type="hidden" id="horaInicio" name="horaInicio">
+
+                        <fieldset id="auditFields" disabled style="border: none; padding: 0; margin: 0;">
+                            
+                            <div class="section-title">Informações Gerais</div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="data">Data *</label>
+                                    <input type="date" id="data" name="data" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="unidade">Unidade *</label>
+                                    <select id="unidade" name="unidade" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Matriz">Matriz</option>
+                                        <option value="Nordeste">Nordeste</option>
+                                        <option value="Centro-Oeste">Centro-Oeste</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="carga">Carga *</label>
+                                    <input type="text" id="carga" name="carga" required placeholder="Ex: 105432">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pedido">Pedido *</label>
+                                    <input type="text" id="pedido" name="pedido" required placeholder="Ex: 89452">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cliente">Cliente *</label>
+                                    <input type="text" id="cliente" name="cliente" required placeholder="Nome do Cliente">
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="transportadora">Transportadora *</label>
+                                    <select id="transportadora" name="transportadora" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Dalmo">Dalmo</option>
+                                        <option value="Holdi">Holdi</option>
+                                        <option value="Passaro">Passaro</option>
+                                        <option value="Mais Transportes">Mais Transportes</option>
+                                        <option value="Karnopp">Karnopp</option>
+                                        <option value="Azurelog">Azurelog</option>
+                                        <option value="Fachini">Fachini</option>
+                                        <option value="Flyville">Flyville</option>
+                                        <option value="__outro__">Outro (digitar)</option>
+                                    </select>
+                                    <input type="text" id="transportadoraOutro" placeholder="Digite a transportadora..." style="display: none; margin-top: 8px;">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="turno">Turno *</label>
+                                    <select id="turno" name="turno" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Turno 11">Turno 11</option>
+                                        <option value="Turno 21">Turno 21</option>
+                                        <option value="Turno 31">Turno 31</option>
+                                        <option value="Turno 16">Turno 16</option>
+                                        <option value="Turno 26">Turno 26</option>
+                                        <option value="Turno 36">Turno 36</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="tipoAuditoria">Tipo de Auditoria *</label>
+                                    <select id="tipoAuditoria" name="tipoAuditoria" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="Embarque">Embarque</option>
+                                        <option value="Checkout">Checkout</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="section-title">Embarque</div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="conferenteEmbarque">Conferente (Embarque)</label>
+                                    <select id="conferenteEmbarque" name="conferenteEmbarque">
+                                        <option value="">Selecione...</option>
+                                        <option value="Aline">Aline</option>
+                                        <option value="Délio">Délio</option>
+                                        <option value="Edilson">Edilson</option>
+                                        <option value="Edson">Edson</option>
+                                        <option value="Eduardo">Eduardo</option>
+                                        <option value="Eduardo P.">Eduardo P.</option>
+                                        <option value="Elton">Elton</option>
+                                        <option value="Fabiano">Fabiano</option>
+                                        <option value="Felipe">Felipe</option>
+                                        <option value="Fernando">Fernando</option>
+                                        <option value="Gabriel">Gabriel</option>
+                                        <option value="Gustavo">Gustavo</option>
+                                        <option value="Igor">Igor</option>
+                                        <option value="Ismael">Ismael</option>
+                                        <option value="Jaderson">Jaderson</option>
+                                        <option value="Juliano">Juliano</option>
+                                        <option value="Kamila">Kamila</option>
+                                        <option value="Luiz Carlos da Rocha">Luiz Carlos da Rocha</option>
+                                        <option value="Marlon">Marlon</option>
+                                        <option value="Paulo Roberto">Paulo Roberto</option>
+                                        <option value="Renato">Renato</option>
+                                        <option value="Ruben Martinez">Ruben Martinez</option>
+                                        <option value="Taberton">Taberton</option>
+                                        <option value="Thallys">Thallys</option>
+                                        <option value="Vagnel">Vagnel</option>
+                                        <option value="Vanusa">Vanusa</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="equipeCarga">Equipe de Carga?</label>
+                                    <select id="equipeCarga" name="equipeCarga">
+                                        <option value="">Selecione...</option>
+                                        <option value="Princesa">Princesa</option>
+                                        <option value="Sindicato">Sindicato</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Cubagem proporcional à carga?</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="cubagemProporcional" value="Sim"> Sim</label>
+                                        <label><input type="radio" name="cubagemProporcional" value="Não" checked> Não</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Equipe reduzida no momento?</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="equipeReduzida" value="Sim"> Sim</label>
+                                        <label><input type="radio" name="equipeReduzida" value="Não" checked> Não</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Conferente novo?</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="conferenteNovoEmbarque" value="Sim"> Sim</label>
+                                        <label><input type="radio" name="conferenteNovoEmbarque" value="Não" checked> Não</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Categoria?</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="categoria" value="Tubos"> Tubos</label>
+                                        <label><input type="radio" name="categoria" value="Conexões" checked> Conexões</label>
+                                        <label><input type="radio" name="categoria" value="Mista"> Mista</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="section-title">Análise Comportamental</div>
+
+                            <div class="score-preview">
+                                <span>Score Geral Estimado:</span>
+                                <span id="scorePreviewBadge" class="score-badge">100%</span>
+                            </div>
+                            <div class="score-preview" style="margin-top: -6px;">
+                                <span>Score Conferente:</span>
+                                <span id="scoreConferentePreviewBadge" class="score-badge">N/A</span>
+                                <span style="margin-left: 16px;">Score Expedição:</span>
+                                <span id="scoreExpedicaoPreviewBadge" class="score-badge">N/A</span>
+                            </div>
+
+                            <div id="containerPerguntasComportamentais"></div>
+
+                            <div class="form-group full-width" style="margin-top: 15px;">
+                                <label for="observacoesAuditor">Registro de desvios comportamentais / Observações do auditor responsável</label>
+                                <textarea id="observacoesAuditor" name="observacoesAuditor" rows="4" placeholder="Descreva observações ou desvios identificados..."></textarea>
+                            </div>
+
+                            <div class="section-title">Auditoria possui divergência?</div>
+                            <div class="form-group">
+                                <label>Auditoria possui divergência? *</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="divergencia" value="Sim"> Sim</label>
+                                    <label><input type="radio" name="divergencia" value="Não" checked> Não</label>
+                                </div>
+                            </div>
+
+                            <div id="secaoDivergenciasCompleta" style="display:none;">
+                                <div id="secaoMotivosDivergencia" class="bg-red-50 p-4 rounded-lg border border-red-200 mb-4">
+                                    <div class="font-bold text-red-800 mb-2">Motivos de Divergência</div>
+                                    <div id="divergenciasContainer"></div>
+                                    <button type="button" class="btn-add" id="btnAddDivergencia">+ Adicionar Divergência</button>
+                                </div>
+
+                                <div class="section-title">Plano de Ação / Sugestão para Correção</div>
+                                <div id="planosAcaoContainer"></div>
+                                <button type="button" class="btn-add" id="btnAddPlanoAcao">+ Adicionar Plano de Ação</button>
+
+                                <div class="section-title">Responsáveis pelo Erro</div>
+                                <div id="responsaveisContainer"></div>
+                                <button type="button" class="btn-add" id="btnAddResponsavel">+ Adicionar Responsável</button>
+                            </div>
+
+                            <div class="section-title">Encerramento</div>
+
+                            <div class="form-group">
+                                <label for="pedidoCompleto">Auditoria no pedido completo?</label>
+                                <select id="pedidoCompleto" name="pedidoCompleto">
+                                    <option value="">Selecione...</option>
+                                    <option value="Sim">Sim</option>
+                                    <option value="Não">Não</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="pontoParada">Ponto de parada do pedido?</label>
+                                <input type="text" id="pontoParada" name="pontoParada" placeholder="Ex: Pallet 3 / Caixa 12">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="auditorResponsavel">Auditor responsável *</label>
+                                <select id="auditorResponsavel" name="auditorResponsavel" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="Lucas">Lucas</option>
+                                    <option value="Lucca">Lucca</option>
+                                    <option value="Carlos Eduardo">Carlos Eduardo</option>
+                                    <option value="__outro__">Outro (digitar)</option>
+                                </select>
+                                <input type="text" id="auditorResponsavelOutro" placeholder="Digite o nome..." style="display: none; margin-top: 8px;">
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label>Fotos da Auditoria (Opcional)</label>
+                                <label class="upload-area" for="auditPhotos">
+                                    <span class="upload-title text-sm font-bold text-blue-900">Anexar ou capturar fotos</span>
+                                    <span class="upload-subtitle text-xs text-slate-500">Clique para selecionar fotos (Até 30 fotos)</span>
+                                </label>
+                                <input type="file" id="auditPhotos" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload(event)">
+                                <div id="photoPreviewGrid" class="photo-grid"></div>
+                            </div>
+
+                            <button type="submit" class="btn-submit" id="btnSubmit">Enviar Auditoria e Gerar Relatório PDF</button>
+                        </fieldset>
+
+                        <div id="statusMessage" class="mt-4 p-3 rounded-lg font-bold text-center hidden"></div>
+                        <div id="whatsappShareContainer" class="mt-2"></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- -------------------------------------- -->
+        <!-- MÓDULO 4: DIVERGÊNCIAS                 -->
+        <!-- -------------------------------------- -->
+        <section id="mod-divergencias" class="modulo-content hidden space-y-6">
+            <div class="flex justify-between items-center border-b pb-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Central de Gestão de Divergências</h1>
+                    <p class="text-slate-500 text-sm">Acompanhamento de planos de ação e não-conformidades</p>
+                </div>
+                <button onclick="carregarDivergencias()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition">
+                    🔄 Atualizar
+                </button>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
-                                <th class="p-3">ID Auditoria</th>
+                            <tr class="border-b bg-slate-50 text-slate-600">
                                 <th class="p-3">Data</th>
-                                <th class="p-3">Carga / Pedido</th>
-                                <th class="p-3">Cliente</th>
-                                <th class="p-3">Tipo / Unidade</th>
-                                <th class="p-3">Auditor</th>
-                                <th class="p-3">Score</th>
+                                <th class="p-3">Motivo</th>
+                                <th class="p-3">Responsável</th>
+                                <th class="p-3">Turno</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Evidência</th>
                                 <th class="p-3 text-right">Ação</th>
                             </tr>
                         </thead>
-                        <tbody id="tabelaAuditoriasBody" class="divide-y divide-slate-200">
-                            <tr>
-                                <td colspan="8" class="p-6 text-center text-slate-400">Carregando lista de auditorias...</td>
-                            </tr>
+                        <tbody id="tabela-divergencias">
+                            <tr><td colspan="7" class="p-4 text-center text-slate-400">Carregando divergências...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- ======================================================== -->
-        <!-- TELA 2: FORMULÁRIO DE EXECUÇÃO DE AUDITORIA (CÓDIGO BASE)  -->
-        <!-- ======================================================== -->
-        <section id="telaFormularioAuditoria" class="hidden">
-            
-            <div class="mb-4 flex justify-between items-center">
-                <button onclick="exibirTela('lista')" class="text-sm font-bold text-slate-600 hover:text-slate-900 flex items-center space-x-1">
-                    <span>← Voltar para a Lista de Auditorias</span>
-                </button>
+        <!-- -------------------------------------- -->
+        <!-- MÓDULO 5: CONFIGURAÇÕES                -->
+        <!-- -------------------------------------- -->
+        <section id="mod-configuracoes" class="modulo-content hidden space-y-6">
+            <div class="flex justify-between items-center border-b pb-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Configurações & Parâmetros</h1>
+                    <p class="text-slate-500 text-sm">Gestão de Unidades Operacionais e Motivos de Divergência</p>
+                </div>
             </div>
 
-            <div class="container mx-auto max-w-4xl bg-white rounded-xl shadow-xl overflow-hidden border border-slate-200 mb-10">
-                <div class="header-krona">
-                    <h1 class="text-2xl font-bold">Plano de Auditoria - Embarque - Conexões</h1>
-                    <p class="text-sm opacity-90">Registro de auditoria de qualidade nos processos de checkout e embarque de cargas</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h2 class="text-lg font-bold text-slate-800 border-b pb-2">Motivos Padronizados</h2>
+                    <form onsubmit="salvarMotivo(event)" class="flex space-x-2">
+                        <input type="text" id="novoMotivoCodigo" placeholder="Código" class="w-1/3 border p-2 rounded-lg text-sm" required />
+                        <input type="text" id="novoMotivoDesc" placeholder="Descrição da Falha" class="w-2/3 border p-2 rounded-lg text-sm" required />
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold">+</button>
+                    </form>
+                    <ul id="lista-motivos-config" class="divide-y divide-slate-100 text-sm"></ul>
                 </div>
 
-                <!-- Banner de Rascunho Restaurado -->
-                <div class="draft-banner m-4" id="draftBanner" style="display: none;">
-                    <div>
-                        <strong class="text-blue-900">📥 Auditoria em andamento restaurada</strong>
-                        <div class="text-xs text-slate-600 mt-1" id="draftBannerText"></div>
-                    </div>
-                    <button type="button" class="btn-clear-draft text-xs border border-red-300 text-red-600 px-3 py-1 rounded bg-white hover:bg-red-50" onclick="limparRascunho()">🗑 Descartar e começar do zero</button>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <h2 class="text-lg font-bold text-slate-800 border-b pb-2">Unidades Operacionais</h2>
+                    <form onsubmit="salvarUnidade(event)" class="flex space-x-2">
+                        <input type="text" id="novaUnidadeCodigo" placeholder="Código" class="w-1/3 border p-2 rounded-lg text-sm" required />
+                        <input type="text" id="novaUnidadeNome" placeholder="Nome da Unidade" class="w-2/3 border p-2 rounded-lg text-sm" required />
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold">+</button>
+                    </form>
+                    <ul id="lista-unidades-config" class="divide-y divide-slate-100 text-sm"></ul>
                 </div>
-
-                <div id="pendentesNuvemContainer" class="p-4" style="display:none;"></div>
-
-                <!-- Barra com ID, Cronômetro e Botão de Início -->
-                <div class="audit-tracker-bar">
-                    <div>ID Auditoria: <span id="auditIdDisplay" class="tracker-badge">---</span></div>
-                    <div class="tracker-controls">
-                        <button type="button" id="btnStartAudit" class="btn-start-audit" onclick="startAudit()">▶ Iniciar Auditoria</button>
-                        <button type="button" id="btnSalvarNuvem" onclick="salvarProgressoNaNuvem()" class="text-xs bg-blue-600 text-white px-3 py-1 rounded" style="display:none;">☁ Salvar progresso na nuvem</button>
-                        <div>Tempo: <span id="timerDisplay" class="timer-badge">00:00:00</span></div>
-                    </div>
-                </div>
-                <div id="statusNuvemMsg" class="px-6 text-xs mt-1"></div>
-
-                <form id="auditForm" class="p-6 md:p-8">
-                    <input type="hidden" id="auditId" name="auditId">
-                    <input type="hidden" id="tempoTotal" name="tempoTotal">
-                    <input type="hidden" id="horaInicio" name="horaInicio">
-
-                    <fieldset id="auditFields" disabled style="border: none; padding: 0; margin: 0;">
-                        
-                        <!-- Informações Gerais -->
-                        <div class="section-title">Informações Gerais</div>
-                        
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="data">Data *</label>
-                                <input type="date" id="data" name="data" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="unidade">Unidade *</label>
-                                <select id="unidade" name="unidade" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="Matriz">Matriz</option>
-                                    <option value="Nordeste">Nordeste</option>
-                                    <option value="Centro-Oeste">Centro-Oeste</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="carga">Carga *</label>
-                                <input type="text" id="carga" name="carga" required placeholder="Ex: 105432">
-                            </div>
-                            <div class="form-group">
-                                <label for="pedido">Pedido *</label>
-                                <input type="text" id="pedido" name="pedido" required placeholder="Ex: 89452">
-                            </div>
-                            <div class="form-group">
-                                <label for="cliente">Cliente *</label>
-                                <input type="text" id="cliente" name="cliente" required placeholder="Nome do Cliente">
-                            </div>
-                        </div>
-
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="transportadora">Transportadora *</label>
-                                <select id="transportadora" name="transportadora" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="Dalmo">Dalmo</option>
-                                    <option value="Holdi">Holdi</option>
-                                    <option value="Passaro">Passaro</option>
-                                    <option value="Mais Transportes">Mais Transportes</option>
-                                    <option value="Karnopp">Karnopp</option>
-                                    <option value="Azurelog">Azurelog</option>
-                                    <option value="Fachini">Fachini</option>
-                                    <option value="Flyville">Flyville</option>
-                                    <option value="__outro__">Outro (digitar)</option>
-                                </select>
-                                <input type="text" id="transportadoraOutro" placeholder="Digite a transportadora..." style="display: none; margin-top: 8px;">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="turno">Turno *</label>
-                                <select id="turno" name="turno" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="Turno 11">Turno 11</option>
-                                    <option value="Turno 21">Turno 21</option>
-                                    <option value="Turno 31">Turno 31</option>
-                                    <option value="Turno 16">Turno 16</option>
-                                    <option value="Turno 26">Turno 26</option>
-                                    <option value="Turno 36">Turno 36</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="tipoAuditoria">Tipo de Auditoria *</label>
-                                <select id="tipoAuditoria" name="tipoAuditoria" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="Embarque">Embarque</option>
-                                    <option value="Checkout">Checkout</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Embarque -->
-                        <div class="section-title">Embarque</div>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="conferenteEmbarque">Conferente (Embarque)</label>
-                                <select id="conferenteEmbarque" name="conferenteEmbarque">
-                                    <option value="">Selecione...</option>
-                                    <option value="Aline">Aline</option>
-                                    <option value="Délio">Délio</option>
-                                    <option value="Edilson">Edilson</option>
-                                    <option value="Edson">Edson</option>
-                                    <option value="Eduardo">Eduardo</option>
-                                    <option value="Eduardo P.">Eduardo P.</option>
-                                    <option value="Elton">Elton</option>
-                                    <option value="Fabiano">Fabiano</option>
-                                    <option value="Felipe">Felipe</option>
-                                    <option value="Fernando">Fernando</option>
-                                    <option value="Gabriel">Gabriel</option>
-                                    <option value="Gustavo">Gustavo</option>
-                                    <option value="Igor">Igor</option>
-                                    <option value="Ismael">Ismael</option>
-                                    <option value="Jaderson">Jaderson</option>
-                                    <option value="Juliano">Juliano</option>
-                                    <option value="Kamila">Kamila</option>
-                                    <option value="Luiz Carlos da Rocha">Luiz Carlos da Rocha</option>
-                                    <option value="Marlon">Marlon</option>
-                                    <option value="Paulo Roberto">Paulo Roberto</option>
-                                    <option value="Renato">Renato</option>
-                                    <option value="Ruben Martinez">Ruben Martinez</option>
-                                    <option value="Taberton">Taberton</option>
-                                    <option value="Thallys">Thallys</option>
-                                    <option value="Vagnel">Vagnel</option>
-                                    <option value="Vanusa">Vanusa</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="equipeCarga">Equipe de Carga?</label>
-                                <select id="equipeCarga" name="equipeCarga">
-                                    <option value="">Selecione...</option>
-                                    <option value="Princesa">Princesa</option>
-                                    <option value="Sindicato">Sindicato</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>Cubagem proporcional à carga?</label>
-                                <div class="radio-group">
-                                    <label><input type="radio" name="cubagemProporcional" value="Sim"> Sim</label>
-                                    <label><input type="radio" name="cubagemProporcional" value="Não" checked> Não</label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Equipe reduzida no momento?</label>
-                                <div class="radio-group">
-                                    <label><input type="radio" name="equipeReduzida" value="Sim"> Sim</label>
-                                    <label><input type="radio" name="equipeReduzida" value="Não" checked> Não</label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Conferente novo?</label>
-                                <div class="radio-group">
-                                    <label><input type="radio" name="conferenteNovoEmbarque" value="Sim"> Sim</label>
-                                    <label><input type="radio" name="conferenteNovoEmbarque" value="Não" checked> Não</label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Categoria?</label>
-                                <div class="radio-group">
-                                    <label><input type="radio" name="categoria" value="Tubos"> Tubos</label>
-                                    <label><input type="radio" name="categoria" value="Conexões" checked> Conexões</label>
-                                    <label><input type="radio" name="categoria" value="Mista"> Mista</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Análise Comportamental -->
-                        <div class="section-title">Análise Comportamental</div>
-
-                        <div class="score-preview">
-                            <span>Score Geral Estimado:</span>
-                            <span id="scorePreviewBadge" class="score-badge">100%</span>
-                        </div>
-                        <div class="score-preview" style="margin-top: -6px;">
-                            <span>Score Conferente:</span>
-                            <span id="scoreConferentePreviewBadge" class="score-badge">N/A</span>
-                            <span style="margin-left: 16px;">Score Expedição:</span>
-                            <span id="scoreExpedicaoPreviewBadge" class="score-badge">N/A</span>
-                        </div>
-
-                        <!-- Perguntas do Checklist Comportamental -->
-                        <div id="containerPerguntasComportamentais"></div>
-
-                        <div class="form-group full-width" style="margin-top: 15px;">
-                            <label for="observacoesAuditor">Registro de desvios comportamentais / Observações do auditor responsável</label>
-                            <textarea id="observacoesAuditor" name="observacoesAuditor" rows="4" placeholder="Descreva observações ou desvios identificados..."></textarea>
-                        </div>
-
-                        <!-- Auditoria possui divergência? -->
-                        <div class="section-title">Auditoria possui divergência?</div>
-                        <div class="form-group">
-                            <label>Auditoria possui divergência? *</label>
-                            <div class="radio-group">
-                                <label><input type="radio" name="divergencia" value="Sim"> Sim</label>
-                                <label><input type="radio" name="divergencia" value="Não" checked> Não</label>
-                            </div>
-                        </div>
-
-                        <!-- Bloco de Divergências -->
-                        <div id="secaoDivergenciasCompleta" style="display:none;">
-                            <div id="secaoMotivosDivergencia" class="bg-red-50 p-4 rounded-lg border border-red-200 mb-4">
-                                <div class="font-bold text-red-800 mb-2">Motivos de Divergência</div>
-                                <div id="divergenciasContainer"></div>
-                                <button type="button" class="btn-add" id="btnAddDivergencia">+ Adicionar Divergência</button>
-                            </div>
-
-                            <div class="section-title">Plano de Ação / Sugestão para Correção</div>
-                            <div id="planosAcaoContainer"></div>
-                            <button type="button" class="btn-add" id="btnAddPlanoAcao">+ Adicionar Plano de Ação</button>
-
-                            <div class="section-title">Responsáveis pelo Erro</div>
-                            <div id="responsaveisContainer"></div>
-                            <button type="button" class="btn-add" id="btnAddResponsavel">+ Adicionar Responsável</button>
-                        </div>
-
-                        <!-- Encerramento -->
-                        <div class="section-title">Encerramento</div>
-
-                        <div class="form-group">
-                            <label for="pedidoCompleto">Auditoria no pedido completo?</label>
-                            <select id="pedidoCompleto" name="pedidoCompleto">
-                                <option value="">Selecione...</option>
-                                <option value="Sim">Sim</option>
-                                <option value="Não">Não</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="pontoParada">Ponto de parada do pedido?</label>
-                            <input type="text" id="pontoParada" name="pontoParada" placeholder="Ex: Pallet 3 / Caixa 12">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="auditorResponsavel">Auditor responsável *</label>
-                            <select id="auditorResponsavel" name="auditorResponsavel" required>
-                                <option value="">Selecione...</option>
-                                <option value="Lucas">Lucas</option>
-                                <option value="Lucca">Lucca</option>
-                                <option value="Carlos Eduardo">Carlos Eduardo</option>
-                                <option value="__outro__">Outro (digitar)</option>
-                            </select>
-                            <input type="text" id="auditorResponsavelOutro" placeholder="Digite o nome..." style="display: none; margin-top: 8px;">
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label>Fotos da Auditoria (Opcional)</label>
-                            <label class="upload-area" for="auditPhotos">
-                                <span class="upload-title text-sm font-bold text-blue-900">Anexar ou capturar fotos</span>
-                                <span class="upload-subtitle text-xs text-slate-500">Clique para selecionar fotos (Até 30 fotos)</span>
-                            </label>
-                            <input type="file" id="auditPhotos" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload(event)">
-                            <div id="photoPreviewGrid" class="photo-grid"></div>
-                        </div>
-
-                        <button type="submit" class="btn-submit" id="btnSubmit">Enviar Auditoria e Gerar Relatório PDF</button>
-                    </fieldset>
-
-                    <div id="statusMessage" class="mt-4 p-3 rounded-lg font-bold text-center hidden"></div>
-                    <div id="whatsappShareContainer" class="mt-2"></div>
-                </form>
             </div>
-
         </section>
 
     </main>
 
-    <!-- LÓGICA E SCRIPTS INTEGRADOS -->
+    <!-- ========================================== -->
+    <!-- MOTOR JS INTEGRADO DO SISTEMA              -->
+    <!-- ========================================== -->
     <script>
-        // CONFIGURAÇÕES DO SUPABASE E ENDPOINT
+        // CONFIGURAÇÕES SUPABASE E ENDPOINT GOOGLE
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2zdBKUB4VSwBkhCPW4YTBi6iDb9I8-FGeydDoH-ITRePzg1lxHX5FcKV2b8YPgjDz/exec';
         const SUPABASE_URL = "https://SEU_PROJETO.supabase.co"; 
         const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_AQUI"; 
@@ -668,43 +868,125 @@
         let divIdCounter = 0;
         const DRAFT_STORAGE_KEY = 'auditoriaRascunhoEmAndamento';
 
-        // ALTERNÂNCIA DE TELAS (SPA)
-        function exibirTela(tela) {
-            const telaLista = document.getElementById('telaListaAuditorias');
-            const telaForm = document.getElementById('telaFormularioAuditoria');
-            const btnNavLista = document.getElementById('btnNavLista');
-            const btnNavNova = document.getElementById('btnNavNova');
+        // 1. NAVEGAÇÃO PRINCIPAL (ENTRE OS 5 MÓDULOS)
+        function navegar(moduloId) {
+            document.querySelectorAll('.modulo-content').forEach(sec => sec.classList.add('hidden'));
+            const moduloAlvo = document.getElementById(`mod-${moduloId}`);
+            if (moduloAlvo) moduloAlvo.classList.remove('hidden');
 
-            if (tela === 'lista') {
-                telaLista.classList.remove('hidden');
-                telaForm.classList.add('hidden');
-                btnNavLista.classList.replace('bg-slate-800', 'bg-blue-700');
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-white');
+                btn.classList.add('text-slate-300');
+            });
+
+            const btnAtivo = document.getElementById(`btn-${moduloId}`);
+            if (btnAtivo) {
+                btnAtivo.classList.add('bg-slate-800', 'text-white');
+                btnAtivo.classList.remove('text-slate-300');
+            }
+
+            if (moduloId === 'indicadores') carregarDashboard();
+            if (moduloId === 'cargas') carregarCargas();
+            if (moduloId === 'auditoria') {
+                exibirSubTelaAuditoria('lista');
                 carregarHistoricoAuditorias();
+            }
+            if (moduloId === 'divergencias') carregarDivergencias();
+            if (moduloId === 'configuracoes') carregarConfiguracoes();
+        }
+
+        // NAVEGAÇÃO INTERNA DO MÓDULO 3 (HISTÓRICO VS FORMULÁRIO KRONA)
+        function exibirSubTelaAuditoria(subTela) {
+            const subLista = document.getElementById('auditoriaSubLista');
+            const subForm = document.getElementById('auditoriaSubForm');
+
+            if (subTela === 'lista') {
+                subLista.classList.remove('hidden');
+                subForm.classList.add('hidden');
             } else {
-                telaLista.classList.add('hidden');
-                telaForm.classList.remove('hidden');
-                btnNavLista.classList.replace('bg-blue-700', 'bg-slate-800');
+                subLista.classList.add('hidden');
+                subForm.classList.remove('hidden');
             }
         }
 
-        // CARREGAR LISTA DE AUDITORIAS (DO SUPABASE OU LOCAL)
+        // 2. MÓDULO INDICADORES
+        async function carregarDashboard() {
+            const { data: kpi } = await supabaseClient.from('v_kpis_dashboard').select('*').maybeSingle();
+            if (kpi) {
+                document.getElementById('kpi-score').innerText = (kpi.score_medio_qualidade || 0) + '%';
+                document.getElementById('kpi-auditorias').innerText = kpi.total_auditorias_concluidas || 0;
+                document.getElementById('kpi-divergencias').innerText = kpi.total_divergencias || 0;
+
+                const total = kpi.total_divergencias || 1;
+                document.getElementById('txt-t1').innerText = kpi.divergencias_turno_1 || 0;
+                document.getElementById('bar-t1').style.width = `${((kpi.divergencias_turno_1 || 0) / total) * 100}%`;
+                document.getElementById('txt-t2').innerText = kpi.divergencias_turno_2 || 0;
+                document.getElementById('bar-t2').style.width = `${((kpi.divergencias_turno_2 || 0) / total) * 100}%`;
+                document.getElementById('txt-t3').innerText = kpi.divergencias_turno_3 || 0;
+                document.getElementById('bar-t3').style.width = `${((kpi.divergencias_turno_3 || 0) / total) * 100}%`;
+            }
+        }
+
+        // 3. MÓDULO CARGAS
+        async function carregarCargas() {
+            const { data: unidades } = await supabaseClient.from('unidades').select('*').eq('ativa', true);
+            const selectUnidade = document.getElementById('cargaUnidadeId');
+            selectUnidade.innerHTML = unidades?.map(u => `<option value="${u.id}">${u.nome}</option>`).join('') || '';
+
+            const { data: cargas } = await supabaseClient.from('cargas').select('*').order('created_at', { ascending: false });
+            const tbody = document.getElementById('tabela-cargas');
+            tbody.innerHTML = '';
+
+            if (cargas && cargas.length > 0) {
+                cargas.forEach(c => {
+                    tbody.innerHTML += `
+                        <tr class="border-b hover:bg-slate-50">
+                            <td class="p-3 font-semibold">${c.codigo_carga}</td>
+                            <td class="p-3">${c.nota_fiscal || '-'}</td>
+                            <td class="p-3">${c.transportadora || '-'}</td>
+                            <td class="p-3"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs uppercase">${c.status}</span></td>
+                            <td class="p-3 text-right">
+                                <button onclick="iniciarAuditoriaDaCarga('${c.codigo_carga}', '${c.transportadora || ''}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded text-xs font-bold">
+                                    Auditar Carga
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">Nenhuma carga cadastrada.</td></tr>';
+            }
+        }
+
+        async function salvarCarga(e) {
+            e.preventDefault();
+            await supabaseClient.from('cargas').insert([{
+                unidade_id: document.getElementById('cargaUnidadeId').value,
+                codigo_carga: document.getElementById('codigoCarga').value,
+                nota_fiscal: document.getElementById('notaFiscal').value,
+                transportadora: document.getElementById('transportadoraCarga').value
+            }]);
+            document.getElementById('formCarga').reset();
+            carregarCargas();
+        }
+
+        function iniciarAuditoriaDaCarga(codigoCarga, transportadora) {
+            navegar('auditoria');
+            exibirSubTelaAuditoria('formulario');
+            document.getElementById('carga').value = codigoCarga;
+            if (transportadora) {
+                document.getElementById('transportadora').value = transportadora;
+            }
+        }
+
+        // 4. MÓDULO AUDITORIA (HISTÓRICO & FORMULÁRIO COMPLETO)
         async function carregarHistoricoAuditorias() {
             const tbody = document.getElementById('tabelaAuditoriasBody');
             tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-400">Buscando auditorias...</td></tr>';
 
-            const { data, error } = await supabaseClient
-                .from('auditorias')
-                .select('*, cargas(codigo_carga, nota_fiscal, transportadora)')
-                .order('created_at', { ascending: false });
-
-            if (error || !data || data.length === 0) {
-                // Fallback com mock visual se banco estiver vazio
-                renderizarTabelaAuditorias(auditoriasLocais);
-                return;
-            }
-
-            auditoriasLocais = data;
-            renderizarTabelaAuditorias(data);
+            const { data } = await supabaseClient.from('auditorias').select('*').order('created_at', { ascending: false });
+            auditoriasLocais = data || [];
+            renderizarTabelaAuditorias(auditoriasLocais);
         }
 
         function renderizarTabelaAuditorias(lista) {
@@ -712,7 +994,7 @@
             tbody.innerHTML = '';
 
             if (lista.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-400">Nenhuma auditoria realizada até o momento.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-400">Nenhuma auditoria realizada até ao momento. Clique em "+ Iniciar Nova Auditoria".</td></tr>';
                 return;
             }
 
@@ -726,44 +1008,28 @@
                 if (item.status === 'em_andamento') emAndamento++;
                 if (score < 100) comDivergencia++;
 
-                const scoreColor = score >= 90 ? 'bg-emerald-100 text-emerald-800' : (score >= 70 ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800');
-
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-                        <td class="p-3 font-mono font-bold text-blue-900">${item.id.substring(0, 8)}...</td>
+                        <td class="p-3 font-mono font-bold text-blue-900">${(item.id || '').substring(0, 8)}...</td>
                         <td class="p-3 text-slate-500">${new Date(item.created_at || Date.now()).toLocaleDateString('pt-BR')}</td>
-                        <td class="p-3"><strong>${item.cargas?.codigo_carga || item.carga || 'Carga N/A'}</strong><br><span class="text-xs text-slate-400">Ped: ${item.pedido || '-'}</span></td>
+                        <td class="p-3"><strong>${item.carga || 'CRG-1029'}</strong><br><span class="text-xs text-slate-400">Ped: ${item.pedido || '-'}</span></td>
                         <td class="p-3 font-medium">${item.cliente || 'Geral'}</td>
-                        <td class="p-3"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded">${item.zona_separacao || item.tipoAuditoria || 'Embarque'}</span></td>
+                        <td class="p-3"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded">${item.tipoAuditoria || 'Embarque'}</span></td>
                         <td class="p-3">${item.auditorResponsavel || 'Auditor'}</td>
-                        <td class="p-3"><span class="${scoreColor} px-2.5 py-1 rounded-full font-bold text-xs">${score}%</span></td>
+                        <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-bold text-xs">${score}%</span></td>
                         <td class="p-3 text-right">
-                            <button onclick="exibirTela('formulario')" class="bg-slate-900 text-white px-2.5 py-1 rounded text-xs font-semibold hover:bg-slate-800">
-                                Ver / Editar
-                            </button>
+                            <button onclick="exibirSubTelaAuditoria('formulario')" class="bg-slate-900 text-white px-2.5 py-1 rounded text-xs font-semibold">Ver / Editar</button>
                         </td>
                     </tr>
                 `;
             });
 
-            // Atualiza Cards
             document.getElementById('totalAuditoriasCard').innerText = lista.length;
-            document.getElementById('scoreMedioCard').innerText = Math.round(totalScore / lista.length) + '%';
+            document.getElementById('scoreMedioCard').innerText = Math.round(totalScore / (lista.length || 1)) + '%';
             document.getElementById('emAndamentoCard').innerText = emAndamento;
             document.getElementById('comDivergenciaCard').innerText = comDivergencia;
         }
 
-        function filtrarAuditorias() {
-            const termo = document.getElementById('filtroBusca').value.toLowerCase();
-            const filtradas = auditoriasLocais.filter(a => 
-                (a.carga && a.carga.toLowerCase().includes(termo)) ||
-                (a.pedido && a.pedido.toLowerCase().includes(termo)) ||
-                (a.cliente && a.cliente.toLowerCase().includes(termo))
-            );
-            renderizarTabelaAuditorias(filtradas);
-        }
-
-        // RENDERIZAR DINAMICAMENTE O CHECKLIST COMPORTAMENTAL
         function renderizarPerguntasComportamentais() {
             const container = document.getElementById('containerPerguntasComportamentais');
             container.innerHTML = behavioralFields.map(field => `
@@ -787,33 +1053,9 @@
             `).join('');
         }
 
-        // MOTOR DE CÁLCULO DE SCORE EM TEMPO REAL
-        function calculateLiveScore() {
-            let totalObtainedWeight = 0, totalMaxWeight = 0;
-            behavioralFields.forEach(field => {
-                const el = document.getElementById(field.id);
-                if (el && el.value) {
-                    if (el.value === 'Sim') { totalObtainedWeight += field.weight; totalMaxWeight += field.weight; }
-                    else if (el.value === 'Não') { totalMaxWeight += field.weight; }
-                }
-            });
-
-            const badge = document.getElementById('scorePreviewBadge');
-            if (totalMaxWeight === 0) {
-                badge.textContent = 'N/A';
-                badge.style.backgroundColor = '#64748b';
-            } else {
-                let scorePct = Math.round((totalObtainedWeight / totalMaxWeight) * 100);
-                badge.textContent = scorePct + '%';
-                badge.style.backgroundColor = scorePct >= 90 ? '#16a34a' : (scorePct >= 70 ? '#d97706' : '#dc2626');
-            }
-        }
-
-        // CONTROLADORES DE INÍCIO E TIMER
-        async function startAudit() {
+        function startAudit() {
             const btn = document.getElementById('btnStartAudit');
             btn.disabled = true;
-            btn.textContent = '⏳ Gerando ID...';
 
             const auditId = 'AUD-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
             document.getElementById('auditIdDisplay').textContent = auditId;
@@ -838,11 +1080,87 @@
             btn.style.backgroundColor = '#64748b';
         }
 
-        // INICIALIZAÇÃO DA PÁGINA
+        function calculateLiveScore() {
+            let totalObtainedWeight = 0, totalMaxWeight = 0;
+            behavioralFields.forEach(field => {
+                const el = document.getElementById(field.id);
+                if (el && el.value) {
+                    if (el.value === 'Sim') { totalObtainedWeight += field.weight; totalMaxWeight += field.weight; }
+                    else if (el.value === 'Não') { totalMaxWeight += field.weight; }
+                }
+            });
+
+            const badge = document.getElementById('scorePreviewBadge');
+            let scorePct = totalMaxWeight > 0 ? Math.round((totalObtainedWeight / totalMaxWeight) * 100) : 100;
+            badge.textContent = scorePct + '%';
+            badge.style.backgroundColor = scorePct >= 90 ? '#16a34a' : (scorePct >= 70 ? '#d97706' : '#dc2626');
+        }
+
+        // 5. MÓDULO DIVERGÊNCIAS
+        async function carregarDivergencias() {
+            const { data: divs } = await supabaseClient.from('divergencias').select(`*, motivos_divergencia(descricao)`).order('created_at', { ascending: false });
+            const tbody = document.getElementById('tabela-divergencias');
+            tbody.innerHTML = '';
+
+            if (divs && divs.length > 0) {
+                divs.forEach(d => {
+                    tbody.innerHTML += `
+                        <tr class="border-b hover:bg-slate-50">
+                            <td class="p-3 text-xs text-slate-500">${new Date(d.created_at).toLocaleDateString()}</td>
+                            <td class="p-3 font-semibold">${d.motivos_divergencia?.descricao || 'Outro'}</td>
+                            <td class="p-3">${d.responsavel_nome}</td>
+                            <td class="p-3 uppercase text-xs">${d.turno_responsavel}</td>
+                            <td class="p-3"><span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded text-xs font-bold">${d.status}</span></td>
+                            <td class="p-3">-</td>
+                            <td class="p-3 text-right"><button onclick="resolverDivergencia('${d.id}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-xs font-bold">Concluir</button></td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-400">Nenhuma divergência pendente.</td></tr>';
+            }
+        }
+
+        async function resolverDivergencia(id) {
+            await supabaseClient.from('divergencias').update({ status: 'resolvida' }).eq('id', id);
+            carregarDivergencias();
+        }
+
+        // 6. MÓDULO CONFIGURAÇÕES
+        async function carregarConfiguracoes() {
+            const { data: motivos } = await supabaseClient.from('motivos_divergencia').select('*');
+            const listaM = document.getElementById('lista-motivos-config');
+            listaM.innerHTML = motivos?.map(m => `<li class="py-2 flex justify-between"><span>${m.descricao}</span><span class="font-mono text-slate-400 text-xs">${m.codigo}</span></li>`).join('') || '';
+
+            const { data: unidades } = await supabaseClient.from('unidades').select('*');
+            const listaU = document.getElementById('lista-unidades-config');
+            listaU.innerHTML = unidades?.map(u => `<li class="py-2 flex justify-between"><span>${u.nome}</span><span class="font-mono text-slate-400 text-xs">${u.codigo}</span></li>`).join('') || '';
+        }
+
+        async function salvarMotivo(e) {
+            e.preventDefault();
+            await supabaseClient.from('motivos_divergencia').insert([{
+                codigo: document.getElementById('novoMotivoCodigo').value,
+                descricao: document.getElementById('novoMotivoDesc').value,
+                categoria: 'Geral'
+            }]);
+            carregarConfiguracoes();
+        }
+
+        async function salvarUnidade(e) {
+            e.preventDefault();
+            await supabaseClient.from('unidades').insert([{
+                codigo: document.getElementById('novaUnidadeCodigo').value,
+                nome: document.getElementById('novaUnidadeNome').value
+            }]);
+            carregarConfiguracoes();
+        }
+
+        // INICIALIZAÇÃO DA APLICAÇÃO
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('data').valueAsDate = new Date();
             renderizarPerguntasComportamentais();
-            carregarHistoricoAuditorias();
+            carregarDashboard();
         });
     </script>
 </body>
