@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>SaaS - Gestão & Auditoria Logística Krona</title>
     
     <!-- Tailwind CSS (CDN) -->
@@ -15,21 +15,24 @@
             --krona-blue: #003865;
             --krona-blue-light: #005691;
             --krona-blue-hover: #002244;
+            --blue-dark: #003d68;
             --bg-color: #f0f4f8;
             --card-bg: #ffffff;
             --text-color: #1e293b;
             --border-color: #cbd5e1;
             --danger-color: #dc2626;
             --success-color: #16a34a;
+            --muted: #6b7280;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Estilos do Formulário Base da Krona */
+        /* Estilos da Auditoria (Krona) */
         .header-krona {
             background-color: var(--krona-blue);
             color: #ffffff;
@@ -107,11 +110,12 @@
 
         .form-group.full-width { grid-column: 1 / -1; }
 
-        label {
+        label.field-label {
             font-weight: 600;
             margin-bottom: 6px;
             font-size: 0.9rem;
             color: var(--krona-blue);
+            display: block;
         }
 
         .radio-group {
@@ -128,15 +132,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-        }
-
-        input[type="text"], input[type="date"], select, textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.95rem;
-            background-color: #fff;
         }
 
         .audit-item {
@@ -166,18 +161,6 @@
             font-size: 1.1rem;
         }
 
-        .divergencia-row, .responsavel-row, .plano-acao-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-            background: #ffffff;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-        }
-
         .btn-add {
             background-color: var(--krona-blue-light);
             color: white;
@@ -200,68 +183,72 @@
             font-weight: bold;
         }
 
-        .upload-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
+        /* Estilos do Formulário de Registro de Divergências */
+        .div-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px 16px 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .div-card select, .div-card input[type="text"], .div-card textarea {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 9px;
+            background: #fff;
+            color: var(--text-color);
+            min-height: 46px;
+        }
+
+        .div-card select {
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9'><path d='M1 1l6 6 6-6' stroke='%23005691' stroke-width='2' fill='none' fill-rule='evenodd' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 34px;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .foto-box-div {
             border: 2px dashed var(--border-color);
-            border-radius: 8px;
-            background-color: #f8fafc;
-            cursor: pointer;
+            border-radius: 10px;
+            padding: 20px 14px;
             text-align: center;
+            cursor: pointer;
+            transition: border-color .15s, background .15s;
         }
+        .foto-box-div:active { border-color: var(--krona-blue-light); background: #f0f6fa; }
 
-        .photo-grid {
+        .preview-div {
+            margin-top: 12px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
-            margin-top: 16px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
         }
 
-        .photo-card {
+        .preview-div .thumb {
             position: relative;
-            border-radius: 6px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border-color);
-            background: #fff;
         }
-
-        .photo-card img { width: 100%; height: 100px; object-fit: cover; }
-
-        .btn-submit {
-            background-color: var(--krona-blue);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 6px;
+        .preview-div .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .preview-div .thumb button {
+            position: absolute; top: 4px; right: 4px;
+            background: rgba(0,0,0,0.65); color: #fff; border: none;
+            width: 22px; height: 22px; border-radius: 50%; font-size: 14px; line-height: 1;
             cursor: pointer;
-            width: 100%;
-            margin-top: 24px;
-        }
-
-        .btn-submit:hover { background-color: var(--krona-blue-light); }
-
-        .draft-banner {
-            background: #e0f2fe;
-            border: 1px solid #7dd3fc;
-            border-radius: 8px;
-            padding: 12px 18px;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
     </style>
 </head>
 <body class="bg-slate-100 font-sans min-h-screen flex flex-col">
 
-    <!-- ========================================== -->
-    <!-- MENU DE NAVEGAÇÃO SUPERIOR (5 MÓDULOS)     -->
-    <!-- ========================================== -->
+    <!-- BARRA SUPERIOR DE NAVEGAÇÃO -->
     <nav class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
             <div class="flex items-center space-x-3">
@@ -289,14 +276,10 @@
         </div>
     </nav>
 
-    <!-- ========================================== -->
-    <!-- CONTAINER DOS MÓDULOS                      -->
-    <!-- ========================================== -->
+    <!-- CONTAINER PRINCIPAL -->
     <main class="max-w-7xl mx-auto p-4 md:p-6 w-full flex-grow">
 
-        <!-- -------------------------------------- -->
-        <!-- MÓDULO 1: INDICADORES                  -->
-        <!-- -------------------------------------- -->
+        <!-- MÓDULO 1: INDICADORES -->
         <section id="mod-indicadores" class="modulo-content space-y-6">
             <div class="flex justify-between items-center border-b pb-4">
                 <div>
@@ -351,9 +334,7 @@
             </div>
         </section>
 
-        <!-- -------------------------------------- -->
-        <!-- MÓDULO 2: SELEÇÃO DE CARGAS            -->
-        <!-- -------------------------------------- -->
+        <!-- MÓDULO 2: SELEÇÃO DE CARGAS -->
         <section id="mod-cargas" class="modulo-content hidden space-y-6">
             <div class="flex justify-between items-center border-b pb-4">
                 <div>
@@ -408,12 +389,8 @@
             </div>
         </section>
 
-        <!-- -------------------------------------- -->
-        <!-- MÓDULO 3: AUDITORIA (HISTÓRICO + KRONA) -->
-        <!-- -------------------------------------- -->
+        <!-- MÓDULO 3: AUDITORIA -->
         <section id="mod-auditoria" class="modulo-content hidden space-y-6">
-            
-            <!-- VISTA A: LISTA E HISTÓRICO DE AUDITORIAS -->
             <div id="auditoriaSubLista" class="space-y-6">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 gap-4">
                     <div>
@@ -425,34 +402,11 @@
                     </button>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <span class="text-xs font-bold text-slate-400 uppercase">Total Realizadas</span>
-                        <p id="totalAuditoriasCard" class="text-3xl font-black text-slate-800 mt-1">0</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <span class="text-xs font-bold text-slate-400 uppercase">Score Médio</span>
-                        <p id="scoreMedioCard" class="text-3xl font-black text-emerald-600 mt-1">100%</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <span class="text-xs font-bold text-slate-400 uppercase">Em Andamento</span>
-                        <p id="emAndamentoCard" class="text-3xl font-black text-amber-500 mt-1">0</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <span class="text-xs font-bold text-slate-400 uppercase">Com Divergência</span>
-                        <p id="comDivergenciaCard" class="text-3xl font-black text-rose-600 mt-1">0</p>
-                    </div>
-                </div>
-
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                     <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-col md:flex-row justify-between gap-4 items-center">
                         <h2 class="font-bold text-slate-800 text-lg">Histórico de Auditorias</h2>
-                        <div class="flex items-center space-x-2 w-full md:w-auto">
-                            <input type="text" id="filtroBusca" onkeyup="filtrarAuditorias()" placeholder="Buscar por Carga, Pedido ou Cliente..." class="border border-slate-300 rounded-lg p-2 text-sm w-full md:w-64">
-                            <button onclick="carregarHistoricoAuditorias()" class="bg-slate-800 text-white p-2 rounded-lg text-sm font-semibold">🔄</button>
-                        </div>
+                        <input type="text" id="filtroBuscaAuditorias" onkeyup="filtrarAuditorias()" placeholder="Buscar por Carga, Pedido ou Cliente..." class="border border-slate-300 rounded-lg p-2 text-sm w-full md:w-64">
                     </div>
-
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
@@ -468,22 +422,17 @@
                                 </tr>
                             </thead>
                             <tbody id="tabelaAuditoriasBody" class="divide-y divide-slate-200">
-                                <tr>
-                                    <td colspan="8" class="p-6 text-center text-slate-400">Carregando lista de auditorias...</td>
-                                </tr>
+                                <tr><td colspan="8" class="p-6 text-center text-slate-400">Carregando lista de auditorias...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- VISTA B: EXECUÇÃO DO FORMULÁRIO DE AUDITORIA (GRUPO KRONA) -->
             <div id="auditoriaSubForm" class="hidden space-y-4">
-                <div class="flex justify-between items-center">
-                    <button onclick="exibirSubTelaAuditoria('lista')" class="text-sm font-bold text-slate-600 hover:text-slate-900 flex items-center space-x-1">
-                        <span>← Voltar para o Histórico de Auditorias</span>
-                    </button>
-                </div>
+                <button onclick="exibirSubTelaAuditoria('lista')" class="text-sm font-bold text-slate-600 hover:text-slate-900 flex items-center space-x-1 mb-2">
+                    <span>← Voltar para o Histórico de Auditorias</span>
+                </button>
 
                 <div class="container mx-auto max-w-4xl bg-white rounded-xl shadow-xl overflow-hidden border border-slate-200 mb-10">
                     <div class="header-krona">
@@ -491,25 +440,13 @@
                         <p class="text-sm opacity-90">Registro de auditoria de qualidade nos processos de checkout e embarque de cargas</p>
                     </div>
 
-                    <div class="draft-banner m-4" id="draftBanner" style="display: none;">
-                        <div>
-                            <strong class="text-blue-900">📥 Auditoria em andamento restaurada</strong>
-                            <div class="text-xs text-slate-600 mt-1" id="draftBannerText"></div>
-                        </div>
-                        <button type="button" class="btn-clear-draft text-xs border border-red-300 text-red-600 px-3 py-1 rounded bg-white hover:bg-red-50" onclick="limparRascunho()">🗑 Descartar e começar do zero</button>
-                    </div>
-
-                    <div id="pendentesNuvemContainer" class="p-4" style="display:none;"></div>
-
                     <div class="audit-tracker-bar">
                         <div>ID Auditoria: <span id="auditIdDisplay" class="tracker-badge">---</span></div>
                         <div class="tracker-controls">
                             <button type="button" id="btnStartAudit" class="btn-start-audit" onclick="startAudit()">▶ Iniciar Auditoria</button>
-                            <button type="button" id="btnSalvarNuvem" onclick="salvarProgressoNaNuvem()" class="text-xs bg-blue-600 text-white px-3 py-1 rounded" style="display:none;">☁ Salvar na nuvem</button>
                             <div>Tempo: <span id="timerDisplay" class="timer-badge">00:00:00</span></div>
                         </div>
                     </div>
-                    <div id="statusNuvemMsg" class="px-6 text-xs mt-1"></div>
 
                     <form id="auditForm" class="p-6 md:p-8">
                         <input type="hidden" id="auditId" name="auditId">
@@ -517,15 +454,14 @@
                         <input type="hidden" id="horaInicio" name="horaInicio">
 
                         <fieldset id="auditFields" disabled style="border: none; padding: 0; margin: 0;">
-                            
                             <div class="section-title">Informações Gerais</div>
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label for="data">Data *</label>
+                                    <label class="field-label" for="data">Data *</label>
                                     <input type="date" id="data" name="data" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="unidade">Unidade *</label>
+                                    <label class="field-label" for="unidade">Unidade *</label>
                                     <select id="unidade" name="unidade" required>
                                         <option value="">Selecione...</option>
                                         <option value="Matriz">Matriz</option>
@@ -537,269 +473,197 @@
 
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label for="carga">Carga *</label>
+                                    <label class="field-label" for="carga">Carga *</label>
                                     <input type="text" id="carga" name="carga" required placeholder="Ex: 105432">
                                 </div>
                                 <div class="form-group">
-                                    <label for="pedido">Pedido *</label>
+                                    <label class="field-label" for="pedido">Pedido *</label>
                                     <input type="text" id="pedido" name="pedido" required placeholder="Ex: 89452">
                                 </div>
                                 <div class="form-group">
-                                    <label for="cliente">Cliente *</label>
+                                    <label class="field-label" for="cliente">Cliente *</label>
                                     <input type="text" id="cliente" name="cliente" required placeholder="Nome do Cliente">
                                 </div>
                             </div>
 
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="transportadora">Transportadora *</label>
-                                    <select id="transportadora" name="transportadora" required>
-                                        <option value="">Selecione...</option>
-                                        <option value="Dalmo">Dalmo</option>
-                                        <option value="Holdi">Holdi</option>
-                                        <option value="Passaro">Passaro</option>
-                                        <option value="Mais Transportes">Mais Transportes</option>
-                                        <option value="Karnopp">Karnopp</option>
-                                        <option value="Azurelog">Azurelog</option>
-                                        <option value="Fachini">Fachini</option>
-                                        <option value="Flyville">Flyville</option>
-                                        <option value="__outro__">Outro (digitar)</option>
-                                    </select>
-                                    <input type="text" id="transportadoraOutro" placeholder="Digite a transportadora..." style="display: none; margin-top: 8px;">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="turno">Turno *</label>
-                                    <select id="turno" name="turno" required>
-                                        <option value="">Selecione...</option>
-                                        <option value="Turno 11">Turno 11</option>
-                                        <option value="Turno 21">Turno 21</option>
-                                        <option value="Turno 31">Turno 31</option>
-                                        <option value="Turno 16">Turno 16</option>
-                                        <option value="Turno 26">Turno 26</option>
-                                        <option value="Turno 36">Turno 36</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="tipoAuditoria">Tipo de Auditoria *</label>
-                                    <select id="tipoAuditoria" name="tipoAuditoria" required>
-                                        <option value="">Selecione...</option>
-                                        <option value="Embarque">Embarque</option>
-                                        <option value="Checkout">Checkout</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="section-title">Embarque</div>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="conferenteEmbarque">Conferente (Embarque)</label>
-                                    <select id="conferenteEmbarque" name="conferenteEmbarque">
-                                        <option value="">Selecione...</option>
-                                        <option value="Aline">Aline</option>
-                                        <option value="Délio">Délio</option>
-                                        <option value="Edilson">Edilson</option>
-                                        <option value="Edson">Edson</option>
-                                        <option value="Eduardo">Eduardo</option>
-                                        <option value="Eduardo P.">Eduardo P.</option>
-                                        <option value="Elton">Elton</option>
-                                        <option value="Fabiano">Fabiano</option>
-                                        <option value="Felipe">Felipe</option>
-                                        <option value="Fernando">Fernando</option>
-                                        <option value="Gabriel">Gabriel</option>
-                                        <option value="Gustavo">Gustavo</option>
-                                        <option value="Igor">Igor</option>
-                                        <option value="Ismael">Ismael</option>
-                                        <option value="Jaderson">Jaderson</option>
-                                        <option value="Juliano">Juliano</option>
-                                        <option value="Kamila">Kamila</option>
-                                        <option value="Luiz Carlos da Rocha">Luiz Carlos da Rocha</option>
-                                        <option value="Marlon">Marlon</option>
-                                        <option value="Paulo Roberto">Paulo Roberto</option>
-                                        <option value="Renato">Renato</option>
-                                        <option value="Ruben Martinez">Ruben Martinez</option>
-                                        <option value="Taberton">Taberton</option>
-                                        <option value="Thallys">Thallys</option>
-                                        <option value="Vagnel">Vagnel</option>
-                                        <option value="Vanusa">Vanusa</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="equipeCarga">Equipe de Carga?</label>
-                                    <select id="equipeCarga" name="equipeCarga">
-                                        <option value="">Selecione...</option>
-                                        <option value="Princesa">Princesa</option>
-                                        <option value="Sindicato">Sindicato</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label>Cubagem proporcional à carga?</label>
-                                    <div class="radio-group">
-                                        <label><input type="radio" name="cubagemProporcional" value="Sim"> Sim</label>
-                                        <label><input type="radio" name="cubagemProporcional" value="Não" checked> Não</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Equipe reduzida no momento?</label>
-                                    <div class="radio-group">
-                                        <label><input type="radio" name="equipeReduzida" value="Sim"> Sim</label>
-                                        <label><input type="radio" name="equipeReduzida" value="Não" checked> Não</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Conferente novo?</label>
-                                    <div class="radio-group">
-                                        <label><input type="radio" name="conferenteNovoEmbarque" value="Sim"> Sim</label>
-                                        <label><input type="radio" name="conferenteNovoEmbarque" value="Não" checked> Não</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Categoria?</label>
-                                    <div class="radio-group">
-                                        <label><input type="radio" name="categoria" value="Tubos"> Tubos</label>
-                                        <label><input type="radio" name="categoria" value="Conexões" checked> Conexões</label>
-                                        <label><input type="radio" name="categoria" value="Mista"> Mista</label>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="section-title">Análise Comportamental</div>
-
                             <div class="score-preview">
                                 <span>Score Geral Estimado:</span>
                                 <span id="scorePreviewBadge" class="score-badge">100%</span>
                             </div>
-                            <div class="score-preview" style="margin-top: -6px;">
-                                <span>Score Conferente:</span>
-                                <span id="scoreConferentePreviewBadge" class="score-badge">N/A</span>
-                                <span style="margin-left: 16px;">Score Expedição:</span>
-                                <span id="scoreExpedicaoPreviewBadge" class="score-badge">N/A</span>
-                            </div>
 
                             <div id="containerPerguntasComportamentais"></div>
 
-                            <div class="form-group full-width" style="margin-top: 15px;">
-                                <label for="observacoesAuditor">Registro de desvios comportamentais / Observações do auditor responsável</label>
-                                <textarea id="observacoesAuditor" name="observacoesAuditor" rows="4" placeholder="Descreva observações ou desvios identificados..."></textarea>
-                            </div>
-
-                            <div class="section-title">Auditoria possui divergência?</div>
-                            <div class="form-group">
-                                <label>Auditoria possui divergência? *</label>
-                                <div class="radio-group">
-                                    <label><input type="radio" name="divergencia" value="Sim"> Sim</label>
-                                    <label><input type="radio" name="divergencia" value="Não" checked> Não</label>
-                                </div>
-                            </div>
-
-                            <div id="secaoDivergenciasCompleta" style="display:none;">
-                                <div id="secaoMotivosDivergencia" class="bg-red-50 p-4 rounded-lg border border-red-200 mb-4">
-                                    <div class="font-bold text-red-800 mb-2">Motivos de Divergência</div>
-                                    <div id="divergenciasContainer"></div>
-                                    <button type="button" class="btn-add" id="btnAddDivergencia">+ Adicionar Divergência</button>
-                                </div>
-
-                                <div class="section-title">Plano de Ação / Sugestão para Correção</div>
-                                <div id="planosAcaoContainer"></div>
-                                <button type="button" class="btn-add" id="btnAddPlanoAcao">+ Adicionar Plano de Ação</button>
-
-                                <div class="section-title">Responsáveis pelo Erro</div>
-                                <div id="responsaveisContainer"></div>
-                                <button type="button" class="btn-add" id="btnAddResponsavel">+ Adicionar Responsável</button>
-                            </div>
-
                             <div class="section-title">Encerramento</div>
-
                             <div class="form-group">
-                                <label for="pedidoCompleto">Auditoria no pedido completo?</label>
-                                <select id="pedidoCompleto" name="pedidoCompleto">
-                                    <option value="">Selecione...</option>
-                                    <option value="Sim">Sim</option>
-                                    <option value="Não">Não</option>
-                                </select>
+                                <label class="field-label" for="auditorResponsavel">Auditor responsável *</label>
+                                <input type="text" id="auditorResponsavel" name="auditorResponsavel" required placeholder="Nome do auditor">
                             </div>
 
-                            <div class="form-group full-width">
-                                <label for="pontoParada">Ponto de parada do pedido?</label>
-                                <input type="text" id="pontoParada" name="pontoParada" placeholder="Ex: Pallet 3 / Caixa 12">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="auditorResponsavel">Auditor responsável *</label>
-                                <select id="auditorResponsavel" name="auditorResponsavel" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="Lucas">Lucas</option>
-                                    <option value="Lucca">Lucca</option>
-                                    <option value="Carlos Eduardo">Carlos Eduardo</option>
-                                    <option value="__outro__">Outro (digitar)</option>
-                                </select>
-                                <input type="text" id="auditorResponsavelOutro" placeholder="Digite o nome..." style="display: none; margin-top: 8px;">
-                            </div>
-
-                            <div class="form-group full-width">
-                                <label>Fotos da Auditoria (Opcional)</label>
-                                <label class="upload-area" for="auditPhotos">
-                                    <span class="upload-title text-sm font-bold text-blue-900">Anexar ou capturar fotos</span>
-                                    <span class="upload-subtitle text-xs text-slate-500">Clique para selecionar fotos (Até 30 fotos)</span>
-                                </label>
-                                <input type="file" id="auditPhotos" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload(event)">
-                                <div id="photoPreviewGrid" class="photo-grid"></div>
-                            </div>
-
-                            <button type="submit" class="btn-submit" id="btnSubmit">Enviar Auditoria e Gerar Relatório PDF</button>
+                            <button type="submit" class="btn-submit" id="btnSubmit">Enviar Auditoria</button>
                         </fieldset>
-
-                        <div id="statusMessage" class="mt-4 p-3 rounded-lg font-bold text-center hidden"></div>
-                        <div id="whatsappShareContainer" class="mt-2"></div>
                     </form>
                 </div>
             </div>
         </section>
 
-        <!-- -------------------------------------- -->
-        <!-- MÓDULO 4: DIVERGÊNCIAS                 -->
-        <!-- -------------------------------------- -->
+        <!-- MÓDULO 4: DIVERGÊNCIAS (HISTÓRICO + FORMULÁRIO COMPLETO) -->
         <section id="mod-divergencias" class="modulo-content hidden space-y-6">
-            <div class="flex justify-between items-center border-b pb-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-slate-900">Central de Gestão de Divergências</h1>
-                    <p class="text-slate-500 text-sm">Acompanhamento de planos de ação e não-conformidades</p>
+            
+            <!-- VISTA A: CENTRAL DE REGISTROS DE DIVERGÊNCIAS -->
+            <div id="divergenciasSubLista" class="space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">Central de Tratativa de Divergências</h1>
+                        <p class="text-slate-500 text-sm">Acompanhamento e registro de não-conformidades operacionais</p>
+                    </div>
+                    <button onclick="exibirSubTelaDivergencias('formulario')" class="bg-rose-600 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md transition flex items-center space-x-2">
+                        <span>➕ Registrar Nova Divergência</span>
+                    </button>
                 </div>
-                <button onclick="carregarDivergencias()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition">
-                    🔄 Atualizar
-                </button>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Total Ocorrências</span>
+                        <p id="totalDivergenciasCard" class="text-3xl font-black text-rose-600 mt-1">0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Em Análise / Aberta</span>
+                        <p id="emAnaliseDivergenciasCard" class="text-3xl font-black text-amber-500 mt-1">0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Resolvidas</span>
+                        <p id="resolvidasDivergenciasCard" class="text-3xl font-black text-emerald-600 mt-1">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-col md:flex-row justify-between gap-4 items-center">
+                        <h2 class="font-bold text-slate-800 text-lg">Ocorrências Registradas</h2>
+                        <button onclick="carregarDivergencias()" class="bg-slate-800 text-white px-3 py-1.5 rounded-lg text-sm font-semibold">🔄 Atualizar</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                    <th class="p-3">Data</th>
+                                    <th class="p-3">Conferente</th>
+                                    <th class="p-3">Turno</th>
+                                    <th class="p-3">Motivo / Causa</th>
+                                    <th class="p-3">Responsável</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3 text-right">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-divergencias" class="divide-y divide-slate-200">
+                                <tr><td colspan="7" class="p-4 text-center text-slate-400">Carregando divergências...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-sm">
-                        <thead>
-                            <tr class="border-b bg-slate-50 text-slate-600">
-                                <th class="p-3">Data</th>
-                                <th class="p-3">Motivo</th>
-                                <th class="p-3">Responsável</th>
-                                <th class="p-3">Turno</th>
-                                <th class="p-3">Status</th>
-                                <th class="p-3">Evidência</th>
-                                <th class="p-3 text-right">Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-divergencias">
-                            <tr><td colspan="7" class="p-4 text-center text-slate-400">Carregando divergências...</td></tr>
-                        </tbody>
-                    </table>
+            <!-- VISTA B: FORMULÁRIO DE REGISTRO DE DIVERGÊNCIAS DA KRONA -->
+            <div id="divergenciasSubForm" class="hidden space-y-4">
+                <button onclick="exibirSubTelaDivergencias('lista')" class="text-sm font-bold text-slate-600 hover:text-slate-900 flex items-center space-x-1 mb-2">
+                    <span>← Voltar para a Central de Divergências</span>
+                </button>
+
+                <div class="max-w-xl mx-auto">
+                    <header class="text-center mb-4">
+                        <span class="inline-block bg-blue-700 text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded mb-2">Grupo Krona</span>
+                        <h1 class="text-2xl font-bold text-blue-950">Registro de Divergências</h1>
+                        <p class="text-sm text-slate-500">Conferentes</p>
+                    </header>
+
+                    <div class="div-card">
+                        <form id="formRegistroDivergencia" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold mb-1 text-slate-800">Conferente *</label>
+                                <select id="conferenteDiv" required></select>
+                                <input type="text" id="conferenteOutroDiv" class="mt-2 hidden" placeholder="Digite o nome">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-1 text-slate-800">Turno *</label>
+                                <select id="turnoDiv" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="Turno 1">Turno 1</option>
+                                    <option value="Turno 2">Turno 2</option>
+                                    <option value="Turno 3">Turno 3</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-1 text-slate-800">Motivo da divergência *</label>
+                                <select id="motivoMacroDiv" required></select>
+                                <input type="text" id="motivoMacroOutroDiv" class="mt-2 hidden" placeholder="Digite o motivo">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-1 text-slate-800">Motivo detalhado da divergência *</label>
+                                <select id="motivoMicroDiv" required disabled>
+                                    <option value="">Selecione o motivo acima primeiro...</option>
+                                </select>
+                                <input type="text" id="motivoMicroOutroDiv" class="mt-2 hidden" placeholder="Digite o motivo detalhado">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-1 text-slate-800">Tipo de divergência *</label>
+                                <select id="tipoDivergenciaDiv" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="Checkout">Checkout</option>
+                                    <option value="Separação">Separação</option>
+                                    <option value="Romaneio">Romaneio</option>
+                                    <option value="Produção">Produção</option>
+                                    <option value="N/A">N/A</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-1 text-slate-800">Responsável pela divergência <span class="font-normal text-slate-400">(opcional)</span></label>
+                                <input type="text" id="responsavelDivergenciaDiv" placeholder="Digite o nome do responsável ou deixe em branco (N/A)">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-1 text-slate-800">Turno responsável *</label>
+                                <select id="turnoResponsavelDiv" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="Turno 1 (22:00 - 05:00)">Turno 1 (22:00 - 05:00)</option>
+                                    <option value="Turno 2 (05:00 - 13:30)">Turno 2 (05:00 - 13:30)</option>
+                                    <option value="Turno 3 (13:30 - 22:00)">Turno 3 (13:30 - 22:00)</option>
+                                    <option value="N/A">N/A</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-1 text-slate-800">Observação <span class="font-normal text-slate-400">(opcional)</span></label>
+                                <textarea id="observacaoDiv" rows="3" placeholder="Detalhes adicionais, se necessário..."></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-1 text-slate-800">Anexo de foto * <span id="fotoContadorDiv" class="font-normal text-slate-400">(0/5)</span></label>
+                                <div class="foto-box-div" id="fotoBoxDiv">
+                                    <span class="block text-sm text-slate-500">Toque para tirar foto ou escolher da galeria</span>
+                                    <span class="block text-xs text-slate-400 mt-1">Até 5 fotos</span>
+                                    <input type="file" id="fotoInputDiv" accept="image/*" multiple class="hidden">
+                                </div>
+                                <div class="preview-div" id="previewDiv"></div>
+                            </div>
+
+                            <button type="submit" id="btnSubmitDiv" class="w-full mt-4 py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-lg transition shadow">
+                                Registrar divergência
+                            </button>
+
+                            <div id="msgDiv" class="p-3 rounded-lg text-sm text-center hidden"></div>
+                        </form>
+                    </div>
                 </div>
             </div>
+
         </section>
 
-        <!-- -------------------------------------- -->
-        <!-- MÓDULO 5: CONFIGURAÇÕES                -->
-        <!-- -------------------------------------- -->
+        <!-- MÓDULO 5: CONFIGURAÇÕES -->
         <section id="mod-configuracoes" class="modulo-content hidden space-y-6">
             <div class="flex justify-between items-center border-b pb-4">
                 <div>
@@ -833,42 +697,49 @@
 
     </main>
 
-    <!-- ========================================== -->
-    <!-- MOTOR JS INTEGRADO DO SISTEMA              -->
-    <!-- ========================================== -->
+    <!-- MOTOR JAVASCRIPT PRINCIPAL -->
     <script>
-        // CONFIGURAÇÕES SUPABASE E ENDPOINT GOOGLE
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2zdBKUB4VSwBkhCPW4YTBi6iDb9I8-FGeydDoH-ITRePzg1lxHX5FcKV2b8YPgjDz/exec';
+        // CONFIGURAÇÕES SUPABASE E ENDPOINTS GOOGLE
+        const GOOGLE_SCRIPT_URL_AUDIT = 'https://script.google.com/macros/s/AKfycby2zdBKUB4VSwBkhCPW4YTBi6iDb9I8-FGeydDoH-ITRePzg1lxHX5FcKV2b8YPgjDz/exec';
+        const WEBAPP_URL_DIVERGENCIAS = 'https://script.google.com/macros/s/AKfycbz9l73Rv-Q2bu-gFe6DnQNk0Odvpy0CucZm-_GENsgUe2YaU5XGVv9AjX9rHtpL6OVP/exec';
+        
         const SUPABASE_URL = "https://SEU_PROJETO.supabase.co"; 
         const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_AQUI"; 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const MOTIVOS_MACRO = ["Falta de itens", "Avaria", "Furo de estoque", "Troca de itens", "Sobra de itens", "Colagem incorreta", "Outro"];
-        const MOTIVOS_MICRO = ["Etiqueta errada", "Checkout montado errado", "Faltando itens", "Tubos avariados", "Material sobrando", "Erro de produção", "Sobrando itens", "Corte virtual", "Material trocado", "Colagem incorreta Zona 05", "Colagem incorreta Zona 06", "Outro"];
-        const LISTA_COLABORADORES = ["Aline", "Délio", "Edilson", "Edson", "Eduardo", "Eduardo P.", "Elton", "Fabiano", "Felipe", "Fernando", "Gabriel", "Gustavo", "Igor", "Ismael", "Jaderson", "Juliano", "Kamila", "Luiz Carlos da Rocha", "Marlon", "Paulo Roberto", "Renato", "Ruben Martinez", "Taberton", "Thallys", "Vagnel", "Vanusa"];
+        // CONSTANTES DO FORMULÁRIO DE DIVERGÊNCIAS
+        const CONFERENTES_LISTA = ["Aline","Délio","Edilson","Edson","Eduardo","Eduardo P.","Elton","Fabiano","Felipe","Fernando","Gabriel","Gustavo","Igor","Ismael","Jaderson","Juliano","Kamila","Luiz Carlos da Rocha","Marlon","Paulo Roberto","Renato","Ruben Martinez","Taberton","Thallys","Vagnel","Vanusa"];
+        const MOTIVOS_MACRO_LISTA = ["Falta de itens","Avaria","Troca de itens","Sobra de itens","Colagem incorreta","Montagem","Padronização","Tubos","Romaneio"];
+        const MOTIVOS_MICRO_MAPA = {
+            "Falta de itens": ["Item não separado","Quantidade divergente","Caixa incompleta","Duas etiquetas na mesma ráfia"],
+            "Avaria": ["Caixa amassada","Caixa molhada","Caixa aberta","Ráfia aberta","Ráfia suja","Rolo sujo","Rolo quebrado","Produto quebrado"],
+            "Troca de itens": ["Código errado","Material separado errado"],
+            "Sobra de itens": ["Item extra não solicitado","Duplicidade de separação"],
+            "Colagem incorreta": ["Etiqueta trocada","Etiqueta ilegível"],
+            "Montagem": ["Montagem incorreta checkout"],
+            "Padronização": ["Carga misturada","Aramado bagunçado","Placa de identificação incorreta"],
+            "Tubos": ["Tubos misturados","Tubos quebrados","Erro de produção"],
+            "Romaneio": ["Quantidade de volumes incorreta"]
+        };
+        const OUTRO_VALUE = "__outro__";
+        const MAX_FOTOS_DIV = 5;
+        let fotosDivergencias = [];
 
+        // ESTRUTURA CHECKLIST AUDITORIA
         const behavioralFields = [
-            { id: 'contagemFisica', weight: 3, label: '1. Contagem física do material realizada?', weightLabel: 'Criticidade Alta' },
-            { id: 'caixasLacradas', weight: 2, label: '2. Caixas/Ráfias devidamente lacradas e etiquetadas', weightLabel: 'Criticidade Média' },
-            { id: 'caixasPosicionadas', weight: 2, label: '3. Caixas/Ráfias posicionadas de forma organizada no Pallet/Aramado', weightLabel: 'Criticidade Média' },
-            { id: 'identificacaoCarga', weight: 1, label: '4. Identificação de carga preenchida corretamente?', weightLabel: 'Criticidade Baixa' },
-            { id: 'materialDisponivelDoca', weight: 2, label: '5. Material completo disponível em doca?', weightLabel: 'Criticidade Média' },
-            { id: 'docaOrganizada', weight: 2, label: '6. Doca organizada sem mistura de pedidos?', weightLabel: 'Criticidade Média' },
-            { id: 'conferenciaOrdemRomaneio', weight: 2, label: '7. Conferência realizada na ordem do romaneio?', weightLabel: 'Criticidade Média' },
-            { id: 'caixaSacoConservacao', weight: 2, label: '8. Caixa/Saco em bom estado de conservação?', weightLabel: 'Criticidade Média' },
-            { id: 'procedimentoPadrao', weight: 3, label: '9. O conferente seguiu o procedimento padrão definido pela Krona?', weightLabel: 'Criticidade Alta' },
-            { id: 'equipeResponsiva', weight: 2, label: '10. A equipe é responsiva em relação às ordens do conferente?', weightLabel: 'Criticidade Média' },
-            { id: 'conferenteColouEtiqueta', weight: 2, label: '11. O conferente que colou a etiqueta?', weightLabel: 'Criticidade Média' }
+            { id: 'contagemFisica', weight: 3, label: '1. Contagem física do material realizada?' },
+            { id: 'caixasLacradas', weight: 2, label: '2. Caixas/Ráfias devidamente lacradas e etiquetadas' },
+            { id: 'caixasPosicionadas', weight: 2, label: '3. Caixas/Ráfias posicionadas de forma organizada' },
+            { id: 'identificacaoCarga', weight: 1, label: '4. Identificação de carga preenchida corretamente?' },
+            { id: 'materialDisponivelDoca', weight: 2, label: '5. Material completo disponível em doca?' },
+            { id: 'docaOrganizada', weight: 2, label: '6. Doca organizada sem mistura de pedidos?' },
+            { id: 'procedimentoPadrao', weight: 3, label: '7. Seguiu o procedimento padrão definido pela Krona?' }
         ];
 
-        let auditoriasLocais = [];
-        let selectedAuditPhotos = [];
         let auditStartTime = null;
         let timerInterval = null;
-        let divIdCounter = 0;
-        const DRAFT_STORAGE_KEY = 'auditoriaRascunhoEmAndamento';
 
-        // 1. NAVEGAÇÃO PRINCIPAL (ENTRE OS 5 MÓDULOS)
+        // CONTROLADOR DE NAVEGAÇÃO DOS 5 MÓDULOS
         function navegar(moduloId) {
             document.querySelectorAll('.modulo-content').forEach(sec => sec.classList.add('hidden'));
             const moduloAlvo = document.getElementById(`mod-${moduloId}`);
@@ -891,50 +762,43 @@
                 exibirSubTelaAuditoria('lista');
                 carregarHistoricoAuditorias();
             }
-            if (moduloId === 'divergencias') carregarDivergencias();
+            if (moduloId === 'divergencias') {
+                exibirSubTelaDivergencias('lista');
+                carregarDivergencias();
+            }
             if (moduloId === 'configuracoes') carregarConfiguracoes();
         }
 
-        // NAVEGAÇÃO INTERNA DO MÓDULO 3 (HISTÓRICO VS FORMULÁRIO KRONA)
-        function exibirSubTelaAuditoria(subTela) {
-            const subLista = document.getElementById('auditoriaSubLista');
-            const subForm = document.getElementById('auditoriaSubForm');
-
-            if (subTela === 'lista') {
-                subLista.classList.remove('hidden');
-                subForm.classList.add('hidden');
-            } else {
-                subLista.classList.add('hidden');
-                subForm.classList.remove('hidden');
-            }
+        // CONTROLADORES DE SUB-TELAS
+        function exibirSubTelaAuditoria(sub) {
+            document.getElementById('auditoriaSubLista').classList.toggle('hidden', sub !== 'lista');
+            document.getElementById('auditoriaSubForm').classList.toggle('hidden', sub !== 'formulario');
         }
 
-        // 2. MÓDULO INDICADORES
+        function exibirSubTelaDivergencias(sub) {
+            document.getElementById('divergenciasSubLista').classList.toggle('hidden', sub !== 'lista');
+            document.getElementById('divergenciasSubForm').classList.toggle('hidden', sub !== 'formulario');
+        }
+
+        // MÓDULO INDICADORES
         async function carregarDashboard() {
             const { data: kpi } = await supabaseClient.from('v_kpis_dashboard').select('*').maybeSingle();
             if (kpi) {
                 document.getElementById('kpi-score').innerText = (kpi.score_medio_qualidade || 0) + '%';
                 document.getElementById('kpi-auditorias').innerText = kpi.total_auditorias_concluidas || 0;
                 document.getElementById('kpi-divergencias').innerText = kpi.total_divergencias || 0;
-
-                const total = kpi.total_divergencias || 1;
-                document.getElementById('txt-t1').innerText = kpi.divergencias_turno_1 || 0;
-                document.getElementById('bar-t1').style.width = `${((kpi.divergencias_turno_1 || 0) / total) * 100}%`;
-                document.getElementById('txt-t2').innerText = kpi.divergencias_turno_2 || 0;
-                document.getElementById('bar-t2').style.width = `${((kpi.divergencias_turno_2 || 0) / total) * 100}%`;
-                document.getElementById('txt-t3').innerText = kpi.divergencias_turno_3 || 0;
-                document.getElementById('bar-t3').style.width = `${((kpi.divergencias_turno_3 || 0) / total) * 100}%`;
             }
         }
 
-        // 3. MÓDULO CARGAS
+        // MÓDULO CARGAS
         async function carregarCargas() {
             const { data: unidades } = await supabaseClient.from('unidades').select('*').eq('ativa', true);
             const selectUnidade = document.getElementById('cargaUnidadeId');
-            selectUnidade.innerHTML = unidades?.map(u => `<option value="${u.id}">${u.nome}</option>`).join('') || '';
+            if(selectUnidade) selectUnidade.innerHTML = unidades?.map(u => `<option value="${u.id}">${u.nome}</option>`).join('') || '';
 
             const { data: cargas } = await supabaseClient.from('cargas').select('*').order('created_at', { ascending: false });
             const tbody = document.getElementById('tabela-cargas');
+            if(!tbody) return;
             tbody.innerHTML = '';
 
             if (cargas && cargas.length > 0) {
@@ -958,61 +822,52 @@
             }
         }
 
-        async function salvarCarga(e) {
+        function salvarCarga(e) {
             e.preventDefault();
-            await supabaseClient.from('cargas').insert([{
+            supabaseClient.from('cargas').insert([{
                 unidade_id: document.getElementById('cargaUnidadeId').value,
                 codigo_carga: document.getElementById('codigoCarga').value,
                 nota_fiscal: document.getElementById('notaFiscal').value,
                 transportadora: document.getElementById('transportadoraCarga').value
-            }]);
-            document.getElementById('formCarga').reset();
-            carregarCargas();
+            }]).then(() => {
+                document.getElementById('formCarga').reset();
+                carregarCargas();
+            });
         }
 
         function iniciarAuditoriaDaCarga(codigoCarga, transportadora) {
             navegar('auditoria');
             exibirSubTelaAuditoria('formulario');
             document.getElementById('carga').value = codigoCarga;
-            if (transportadora) {
-                document.getElementById('transportadora').value = transportadora;
-            }
         }
 
-        // 4. MÓDULO AUDITORIA (HISTÓRICO & FORMULÁRIO COMPLETO)
+        // MÓDULO AUDITORIA
         async function carregarHistoricoAuditorias() {
             const tbody = document.getElementById('tabelaAuditoriasBody');
+            if(!tbody) return;
             tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-400">Buscando auditorias...</td></tr>';
 
             const { data } = await supabaseClient.from('auditorias').select('*').order('created_at', { ascending: false });
-            auditoriasLocais = data || [];
-            renderizarTabelaAuditorias(auditoriasLocais);
+            renderizarTabelaAuditorias(data || []);
         }
 
         function renderizarTabelaAuditorias(lista) {
             const tbody = document.getElementById('tabelaAuditoriasBody');
+            if(!tbody) return;
             tbody.innerHTML = '';
 
             if (lista.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-400">Nenhuma auditoria realizada até ao momento. Clique em "+ Iniciar Nova Auditoria".</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-400">Nenhuma auditoria registrada. Clique em "➕ Iniciar Nova Auditoria".</td></tr>';
                 return;
             }
 
-            let totalScore = 0;
-            let comDivergencia = 0;
-            let emAndamento = 0;
-
             lista.forEach(item => {
                 const score = item.score_geral ?? 100;
-                totalScore += Number(score);
-                if (item.status === 'em_andamento') emAndamento++;
-                if (score < 100) comDivergencia++;
-
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition border-b border-slate-100">
                         <td class="p-3 font-mono font-bold text-blue-900">${(item.id || '').substring(0, 8)}...</td>
                         <td class="p-3 text-slate-500">${new Date(item.created_at || Date.now()).toLocaleDateString('pt-BR')}</td>
-                        <td class="p-3"><strong>${item.carga || 'CRG-1029'}</strong><br><span class="text-xs text-slate-400">Ped: ${item.pedido || '-'}</span></td>
+                        <td class="p-3"><strong>${item.carga || 'CRG-1029'}</strong></td>
                         <td class="p-3 font-medium">${item.cliente || 'Geral'}</td>
                         <td class="p-3"><span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded">${item.tipoAuditoria || 'Embarque'}</span></td>
                         <td class="p-3">${item.auditorResponsavel || 'Auditor'}</td>
@@ -1023,30 +878,18 @@
                     </tr>
                 `;
             });
-
-            document.getElementById('totalAuditoriasCard').innerText = lista.length;
-            document.getElementById('scoreMedioCard').innerText = Math.round(totalScore / (lista.length || 1)) + '%';
-            document.getElementById('emAndamentoCard').innerText = emAndamento;
-            document.getElementById('comDivergenciaCard').innerText = comDivergencia;
         }
 
         function renderizarPerguntasComportamentais() {
             const container = document.getElementById('containerPerguntasComportamentais');
+            if(!container) return;
             container.innerHTML = behavioralFields.map(field => `
                 <div class="audit-item">
-                    <label for="${field.id}">${field.label} (${field.weightLabel})</label>
+                    <label class="field-label" for="${field.id}">${field.label}</label>
                     <select id="${field.id}" name="${field.id}" class="behavioral-field" required onchange="calculateLiveScore()">
                         <option value="">Selecione...</option>
                         <option value="Sim">Sim</option>
                         <option value="Não">Não</option>
-                        <option value="N/A">N/A</option>
-                    </select>
-                    <label for="${field.id}Resp" class="text-xs font-bold text-slate-500 mt-2 block">Responsável pelo resultado:</label>
-                    <select id="${field.id}Resp" name="${field.id}Resp" class="behavioral-resp-field" onchange="calculateLiveScore()">
-                        <option value="">Selecione...</option>
-                        <option value="Conferente">Conferente</option>
-                        <option value="Expedição">Expedição</option>
-                        <option value="Ambos">Ambos</option>
                         <option value="N/A">N/A</option>
                     </select>
                 </div>
@@ -1062,22 +905,16 @@
             document.getElementById('auditId').value = auditId;
 
             auditStartTime = new Date();
-            document.getElementById('horaInicio').value = auditStartTime.toLocaleTimeString('pt-BR');
-            
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 const diffMs = new Date() - auditStartTime;
                 const sec = Math.floor((diffMs / 1000) % 60);
                 const min = Math.floor((diffMs / (1000 * 60)) % 60);
-                const hrs = Math.floor(diffMs / (1000 * 60 * 60));
-                const timeStr = `${String(hrs).padStart(2,'0')}:${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-                document.getElementById('timerDisplay').textContent = timeStr;
-                document.getElementById('tempoTotal').value = timeStr;
+                document.getElementById('timerDisplay').textContent = `${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
             }, 1000);
 
             document.getElementById('auditFields').disabled = false;
             btn.textContent = '⏱ Auditoria em Andamento';
-            btn.style.backgroundColor = '#64748b';
         }
 
         function calculateLiveScore() {
@@ -1092,32 +929,39 @@
 
             const badge = document.getElementById('scorePreviewBadge');
             let scorePct = totalMaxWeight > 0 ? Math.round((totalObtainedWeight / totalMaxWeight) * 100) : 100;
-            badge.textContent = scorePct + '%';
-            badge.style.backgroundColor = scorePct >= 90 ? '#16a34a' : (scorePct >= 70 ? '#d97706' : '#dc2626');
+            if(badge) badge.textContent = scorePct + '%';
         }
 
-        // 5. MÓDULO DIVERGÊNCIAS
+        // MÓDULO DIVERGÊNCIAS (CENTRAL + REGISTRO)
         async function carregarDivergencias() {
-            const { data: divs } = await supabaseClient.from('divergencias').select(`*, motivos_divergencia(descricao)`).order('created_at', { ascending: false });
             const tbody = document.getElementById('tabela-divergencias');
-            tbody.innerHTML = '';
+            if(!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-400">Carregando divergências...</td></tr>';
 
+            const { data: divs } = await supabaseClient.from('divergencias').select(`*, motivos_divergencia(descricao)`).order('created_at', { ascending: false });
+
+            tbody.innerHTML = '';
             if (divs && divs.length > 0) {
+                let emAnalise = 0, resolvidas = 0;
                 divs.forEach(d => {
+                    if (d.status === 'resolvida') resolvidas++; else emAnalise++;
                     tbody.innerHTML += `
                         <tr class="border-b hover:bg-slate-50">
                             <td class="p-3 text-xs text-slate-500">${new Date(d.created_at).toLocaleDateString()}</td>
-                            <td class="p-3 font-semibold">${d.motivos_divergencia?.descricao || 'Outro'}</td>
-                            <td class="p-3">${d.responsavel_nome}</td>
-                            <td class="p-3 uppercase text-xs">${d.turno_responsavel}</td>
-                            <td class="p-3"><span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded text-xs font-bold">${d.status}</span></td>
-                            <td class="p-3">-</td>
+                            <td class="p-3 font-semibold">${d.conferente || d.responsavel_nome || '-'}</td>
+                            <td class="p-3 text-xs">${d.turno || d.turno_responsavel || '-'}</td>
+                            <td class="p-3">${d.motivos_divergencia?.descricao || d.motivoMacro || 'Divergência'}</td>
+                            <td class="p-3">${d.responsavelDivergencia || '-'}</td>
+                            <td class="p-3"><span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded text-xs font-bold">${d.status || 'Aberta'}</span></td>
                             <td class="p-3 text-right"><button onclick="resolverDivergencia('${d.id}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-xs font-bold">Concluir</button></td>
                         </tr>
                     `;
                 });
+                document.getElementById('totalDivergenciasCard').innerText = divs.length;
+                document.getElementById('emAnaliseDivergenciasCard').innerText = emAnalise;
+                document.getElementById('resolvidasDivergenciasCard').innerText = resolvidas;
             } else {
-                tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-400">Nenhuma divergência pendente.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-400">Nenhuma divergência registrada. Clique em "➕ Registrar Nova Divergência".</td></tr>';
             }
         }
 
@@ -1126,40 +970,229 @@
             carregarDivergencias();
         }
 
-        // 6. MÓDULO CONFIGURAÇÕES
+        // SETUP DO FORMULÁRIO DE DIVERGÊNCIAS
+        function setupFormularioDivergencias() {
+            const selConferente = document.getElementById('conferenteDiv');
+            const selMacro = document.getElementById('motivoMacroDiv');
+            const selMicro = document.getElementById('motivoMicroDiv');
+            const inputConferenteOutro = document.getElementById('conferenteOutroDiv');
+            const inputMacroOutro = document.getElementById('motivoMacroOutroDiv');
+            const inputMicroOutro = document.getElementById('motivoMicroOutroDiv');
+
+            function preencherOpcoes(select, opcoes) {
+                if(!select) return;
+                select.innerHTML = '<option value="">Selecione...</option>';
+                opcoes.forEach(op => select.innerHTML += `<option value="${op}">${op}</option>`);
+                select.innerHTML += `<option value="${OUTRO_VALUE}">Outro - Digitar</option>`;
+            }
+
+            preencherOpcoes(selConferente, CONFERENTES_LISTA);
+            preencherOpcoes(selMacro, MOTIVOS_MACRO_LISTA);
+
+            function toggleCampoOutro(select, input) {
+                const ehOutro = select.value === OUTRO_VALUE;
+                input.classList.toggle('hidden', !ehOutro);
+                input.required = ehOutro;
+                if (ehOutro) input.focus(); else input.value = '';
+            }
+
+            selConferente.addEventListener('change', () => toggleCampoOutro(selConferente, inputConferenteOutro));
+
+            selMacro.addEventListener('change', () => {
+                toggleCampoOutro(selMacro, inputMacroOutro);
+                const macro = selMacro.value;
+                selMicro.innerHTML = '';
+                inputMicroOutro.classList.add('hidden'); inputMicroOutro.required = false; inputMicroOutro.value = '';
+
+                if (!macro) {
+                    selMicro.disabled = true;
+                    selMicro.innerHTML = '<option value="">Selecione o motivo acima primeiro...</option>';
+                    return;
+                }
+
+                selMicro.disabled = false;
+                selMicro.innerHTML = '<option value="">Selecione...</option>';
+
+                if (macro === OUTRO_VALUE) {
+                    selMicro.innerHTML += `<option value="${OUTRO_VALUE}">Outro - Digitar</option>`;
+                    return;
+                }
+
+                (MOTIVOS_MICRO_MAPA[macro] || []).forEach(mi => {
+                    selMicro.innerHTML += `<option value="${mi}">${mi}</option>`;
+                });
+                selMicro.innerHTML += `<option value="${OUTRO_VALUE}">Outro - Digitar</option>`;
+            });
+
+            selMicro.addEventListener('change', () => toggleCampoOutro(selMicro, inputMicroOutro));
+
+            // Fotos
+            const fotoBox = document.getElementById('fotoBoxDiv');
+            const fotoInput = document.getElementById('fotoInputDiv');
+
+            fotoBox.addEventListener('click', () => {
+                if (fotosDivergencias.length >= MAX_FOTOS_DIV) return;
+                fotoInput.click();
+            });
+
+            fotoInput.addEventListener('change', async () => {
+                const espaco = MAX_FOTOS_DIV - fotosDivergencias.length;
+                const arquivos = Array.from(fotoInput.files).slice(0, espaco);
+
+                for (const file of arquivos) {
+                    try {
+                        const dataUrl = await redimensionarImagem(file, 900, 0.7);
+                        if (dataUrl) fotosDivergencias.push({ name: file.name, dataUrl });
+                    } catch (e) {
+                        console.error('Falha na foto:', e);
+                    }
+                }
+                fotoInput.value = '';
+                renderizarPreviewFotosDivergencia();
+            });
+
+            // Submit Handler
+            document.getElementById('formRegistroDivergencia').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const msg = document.getElementById('msgDiv');
+                const btnSubmit = document.getElementById('btnSubmitDiv');
+
+                const conferente = selConferente.value === OUTRO_VALUE ? inputConferenteOutro.value.trim() : selConferente.value;
+                const motivoMacro = selMacro.value === OUTRO_VALUE ? inputMacroOutro.value.trim() : selMacro.value;
+                const motivoMicro = selMicro.value === OUTRO_VALUE ? inputMicroOutro.value.trim() : selMicro.value;
+
+                if (fotosDivergencias.length === 0) {
+                    msg.textContent = 'Anexe pelo menos uma foto de evidência.';
+                    msg.className = 'p-3 rounded-lg text-sm text-center bg-red-100 text-red-800';
+                    return;
+                }
+
+                btnSubmit.disabled = true;
+                btnSubmit.textContent = 'Salvando Registro...';
+
+                const entry = {
+                    conferente,
+                    turno: document.getElementById('turnoDiv').value,
+                    motivoMacro,
+                    motivoMicro,
+                    tipoDivergencia: document.getElementById('tipoDivergenciaDiv').value,
+                    responsavelDivergencia: document.getElementById('responsavelDivergenciaDiv').value.trim() || 'N/A',
+                    turnoResponsavel: document.getElementById('turnoResponsavelDiv').value,
+                    observacao: document.getElementById('observacaoDiv').value.trim(),
+                    fotos: fotosDivergencias.map(f => f.dataUrl),
+                    criadoEm: new Date().toISOString()
+                };
+
+                try {
+                    await fetch(WEBAPP_URL_DIVERGENCIAS, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(entry)
+                    });
+
+                    msg.textContent = 'Divergência registrada com sucesso!';
+                    msg.className = 'p-3 rounded-lg text-sm text-center bg-emerald-100 text-emerald-800';
+                    document.getElementById('formRegistroDivergencia').reset();
+                    fotosDivergencias = [];
+                    renderizarPreviewFotosDivergencia();
+                    setTimeout(() => {
+                        msg.classList.add('hidden');
+                        exibirSubTelaDivergencias('lista');
+                        carregarDivergencias();
+                    }, 1500);
+
+                } catch (err) {
+                    msg.textContent = 'Erro ao conectar. O formulário tentará salvar novamente.';
+                    msg.className = 'p-3 rounded-lg text-sm text-center bg-red-100 text-red-800';
+                } finally {
+                    btnSubmit.disabled = false;
+                    btnSubmit.textContent = 'Registrar divergência';
+                }
+            });
+        }
+
+        function renderizarPreviewFotosDivergencia() {
+            const preview = document.getElementById('previewDiv');
+            const fotoContador = document.getElementById('fotoContadorDiv');
+            if(!preview) return;
+
+            preview.innerHTML = '';
+            fotosDivergencias.forEach((f, i) => {
+                preview.innerHTML += `<div class="thumb"><img src="${f.dataUrl}"><button type="button" onclick="removerFotoDivergencia(${i})">×</button></div>`;
+            });
+            fotoContador.textContent = `(${fotosDivergencias.length}/${MAX_FOTOS_DIV})`;
+        }
+
+        function removerFotoDivergencia(i) {
+            fotosDivergencias.splice(i, 1);
+            renderizarPreviewFotosDivergencia();
+        }
+
+        // MOTOR DE REDIMENSIONAMENTO DE IMAGEM
+        async function redimensionarImagem(file, maxDim, qualidade) {
+            if (typeof createImageBitmap === 'function') {
+                try {
+                    const bitmap = await createImageBitmap(file, { resizeWidth: maxDim, resizeHeight: maxDim, resizeQuality: 'medium' });
+                    const canvas = document.createElement('canvas');
+                    canvas.width = bitmap.width; canvas.height = bitmap.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(bitmap, 0, 0);
+                    if (bitmap.close) bitmap.close();
+                    return canvas.toDataURL('image/jpeg', qualidade);
+                } catch (e) { /* fallback */ }
+            }
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let w = img.width, h = img.height;
+                        if (w > h && w > maxDim) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+                        else if (h > maxDim) { w = Math.round(w * (maxDim / h)); h = maxDim; }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        resolve(canvas.toDataURL('image/jpeg', qualidade));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // MÓDULO CONFIGURAÇÕES
         async function carregarConfiguracoes() {
             const { data: motivos } = await supabaseClient.from('motivos_divergencia').select('*');
             const listaM = document.getElementById('lista-motivos-config');
-            listaM.innerHTML = motivos?.map(m => `<li class="py-2 flex justify-between"><span>${m.descricao}</span><span class="font-mono text-slate-400 text-xs">${m.codigo}</span></li>`).join('') || '';
+            if(listaM) listaM.innerHTML = motivos?.map(m => `<li class="py-2 flex justify-between"><span>${m.descricao}</span><span class="font-mono text-slate-400 text-xs">${m.codigo}</span></li>`).join('') || '';
 
             const { data: unidades } = await supabaseClient.from('unidades').select('*');
             const listaU = document.getElementById('lista-unidades-config');
-            listaU.innerHTML = unidades?.map(u => `<li class="py-2 flex justify-between"><span>${u.nome}</span><span class="font-mono text-slate-400 text-xs">${u.codigo}</span></li>`).join('') || '';
+            if(listaU) listaU.innerHTML = unidades?.map(u => `<li class="py-2 flex justify-between"><span>${u.nome}</span><span class="font-mono text-slate-400 text-xs">${u.codigo}</span></li>`).join('') || '';
         }
 
-        async function salvarMotivo(e) {
+        function salvarMotivo(e) {
             e.preventDefault();
-            await supabaseClient.from('motivos_divergencia').insert([{
+            supabaseClient.from('motivos_divergencia').insert([{
                 codigo: document.getElementById('novoMotivoCodigo').value,
                 descricao: document.getElementById('novoMotivoDesc').value,
                 categoria: 'Geral'
-            }]);
-            carregarConfiguracoes();
+            }]).then(() => carregarConfiguracoes());
         }
 
-        async function salvarUnidade(e) {
+        function salvarUnidade(e) {
             e.preventDefault();
-            await supabaseClient.from('unidades').insert([{
+            supabaseClient.from('unidades').insert([{
                 codigo: document.getElementById('novaUnidadeCodigo').value,
                 nome: document.getElementById('novaUnidadeNome').value
-            }]);
-            carregarConfiguracoes();
+            }]).then(() => carregarConfiguracoes());
         }
 
-        // INICIALIZAÇÃO DA APLICAÇÃO
+        // INICIALIZAÇÃO
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('data').valueAsDate = new Date();
+            if(document.getElementById('data')) document.getElementById('data').valueAsDate = new Date();
             renderizarPerguntasComportamentais();
+            setupFormularioDivergencias();
             carregarDashboard();
         });
     </script>
