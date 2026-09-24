@@ -3,80 +3,205 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SaaS de Auditoria Logística (Sem Node)</title>
+  <title>SaaS - Gestão & Auditoria Logística</title>
   
-  <!-- 1. Tailwind CSS via CDN (Estilização) -->
+  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- 2. Supabase Client via CDN (Conexão direta com o Banco/Storage) -->
+  <!-- Supabase JS Client via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-100 font-sans p-6">
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
 
-  <div class="max-w-5xl mx-auto space-y-8">
-    
-    <!-- CABEÇALHO -->
-    <header class="bg-slate-900 text-white p-6 rounded-xl shadow-lg flex justify-between items-center">
-      <div>
-        <h1 class="text-2xl font-bold">Sistema de Auditoria Logística</h1>
-        <p class="text-slate-400 text-sm">Painel do Auditor e Indicadores de Qualidade</p>
-      </div>
-      <button onclick="carregarDashboard()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded font-semibold text-sm transition">
-        🔄 Atualizar Dashboard
-      </button>
-    </header>
-
-    <!-- PAINEL DE INDICADORES (KPIs) -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-        <p class="text-sm text-slate-500 font-medium">Score Geral de Qualidade</p>
-        <p id="kpi-score" class="text-4xl font-extrabold text-emerald-600 mt-2">--%</p>
+  <!-- ========================================== -->
+  <!-- BARRA DE NAVEGAÇÃO SUPERIOR (NAVBAR)       -->
+  <!-- ========================================== -->
+  <nav class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
+      <div class="flex items-center space-x-3">
+        <span class="text-2xl font-black text-indigo-400 tracking-wider">LOGI</span>
+        <span class="text-xs uppercase font-bold bg-indigo-900 text-indigo-200 px-2 py-1 rounded border border-indigo-700">Audit SaaS</span>
       </div>
 
-      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-        <p class="text-sm text-slate-500 font-medium">Auditorias Concluídas</p>
-        <p id="kpi-auditorias" class="text-4xl font-extrabold text-slate-800 mt-2">--</p>
+      <div class="flex space-x-1 overflow-x-auto">
+        <button onclick="navegar('indicadores')" id="btn-indicadores" class="nav-btn px-3 py-2 rounded-md text-sm font-medium bg-slate-800 text-white">
+          📊 Indicadores
+        </button>
+        <button onclick="navegar('cargas')" id="btn-cargas" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">
+          🚚 Seleção de Cargas
+        </button>
+        <button onclick="navegar('auditoria')" id="btn-auditoria" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">
+          📋 Auditoria
+        </button>
+        <button onclick="navegar('divergencias')" id="btn-divergencias" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">
+          ⚠️ Divergências
+        </button>
+        <button onclick="navegar('configuracoes')" id="btn-configuracoes" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">
+          ⚙️ Configurações
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- CONTAINER PRINCIPAL                        -->
+  <!-- ========================================== -->
+  <main class="max-w-7xl mx-auto p-4 md:p-6 w-full flex-grow">
+
+    <!-- MÓDULO 1: INDICADORES -->
+    <section id="mod-indicadores" class="modulo-content space-y-6">
+      <div class="flex justify-between items-center border-b pb-4">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">Dashboard de Qualidade & Performance</h1>
+          <p class="text-slate-500 text-sm">Visão consolidada de acuracidade e divergências operacionais</p>
+        </div>
+        <button onclick="carregarDashboard()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition">
+          🔄 Atualizar Dados
+        </button>
       </div>
 
-      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-        <p class="text-sm text-slate-500 font-medium">Total de Divergências</p>
-        <p id="kpi-divergencias" class="text-4xl font-extrabold text-rose-600 mt-2">--</p>
+      <!-- KPIs Primários -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <span class="text-sm font-semibold text-slate-500 uppercase">Score Geral de Qualidade</span>
+          <p id="kpi-score" class="text-5xl font-extrabold text-emerald-600 mt-4">--%</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <span class="text-sm font-semibold text-slate-500 uppercase">Auditorias Concluídas</span>
+          <p id="kpi-auditorias" class="text-5xl font-extrabold text-slate-800 mt-4">--</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <span class="text-sm font-semibold text-slate-500 uppercase">Total de Divergências</span>
+          <p id="kpi-divergencias" class="text-5xl font-extrabold text-rose-600 mt-4">--</p>
+        </div>
       </div>
-    </section>
 
-    <!-- FORMULÁRIO DE EXECUÇÃO DA AUDITORIA -->
-    <section class="bg-white p-6 rounded-xl shadow-md border border-slate-200 space-y-6">
-      <h2 class="text-xl font-bold text-slate-800 border-b pb-2">Registrar Item de Auditoria</h2>
-      
-      <form id="auditForm" class="space-y-4">
-        <!-- IDs de Contexto -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 uppercase">ID da Auditoria (UUID)</label>
-            <input type="text" id="auditoriaId" class="w-full border border-slate-300 p-2 rounded text-sm" placeholder="Cole aqui o UUID da auditoria" required />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 uppercase">Plano / Lote Nº</label>
-            <input type="number" id="planoNumero" value="1" class="w-full border border-slate-300 p-2 rounded text-sm" required />
+      <!-- Distribuição por Turno e Motivos -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-lg font-bold text-slate-800">Divergências por Turno</h2>
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between text-sm mb-1 font-medium"><span>Turno 1</span><span id="txt-t1">0</span></div>
+              <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div id="bar-t1" class="bg-indigo-600 h-full w-0 transition-all duration-500"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1 font-medium"><span>Turno 2</span><span id="txt-t2">0</span></div>
+              <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div id="bar-t2" class="bg-indigo-500 h-full w-0 transition-all duration-500"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1 font-medium"><span>Turno 3</span><span id="txt-t3">0</span></div>
+              <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden"><div id="bar-t3" class="bg-indigo-400 h-full w-0 transition-all duration-500"></div></div>
+            </div>
           </div>
         </div>
 
-        <!-- Dados do Item -->
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-lg font-bold text-slate-800">Principais Motivos de Divergência</h2>
+          <ul id="lista-motivos-kpi" class="divide-y divide-slate-100 text-sm">
+            <li class="py-2 text-slate-400 italic">Carregando indicadores...</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 2: SELEÇÃO DE CARGAS -->
+    <section id="mod-cargas" class="modulo-content hidden space-y-6">
+      <div class="flex justify-between items-center border-b pb-4">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">Seleção e Cadastro de Cargas</h1>
+          <p class="text-slate-500 text-sm">Ordens recebidas para direcionamento à bancada de auditoria</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Cadastrar Carga -->
+        <form id="formCarga" onsubmit="salvarCarga(event)" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-lg font-bold text-slate-800 border-b pb-2">Nova Carga / Ordem</h2>
+          <div>
+            <label class="block text-sm font-medium text-slate-700">Unidade Operacional</label>
+            <select id="cargaUnidadeId" class="w-full border p-2 rounded-lg bg-white text-sm" required></select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700">Código da Carga/Ordem</label>
+            <input type="text" id="codigoCarga" class="w-full border p-2 rounded-lg text-sm" placeholder="Ex: CRG-2026-001" required />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700">Nota Fiscal</label>
+            <input type="text" id="notaFiscal" class="w-full border p-2 rounded-lg text-sm" placeholder="Ex: NF-88912" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700">Transportadora</label>
+            <input type="text" id="transportadora" class="w-full border p-2 rounded-lg text-sm" placeholder="Ex: Logística Brasil" />
+          </div>
+          <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg text-sm transition">
+            Cadastrar Carga
+          </button>
+        </form>
+
+        <!-- Lista de Cargas -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-lg font-bold text-slate-800 border-b pb-2">Cargas Disponíveis</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="border-b bg-slate-50 text-slate-600">
+                  <th class="p-3">Código</th>
+                  <th class="p-3">Nota Fiscal</th>
+                  <th class="p-3">Transportadora</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3 text-right">Ação</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-cargas">
+                <tr><td colspan="5" class="p-4 text-center text-slate-400">Carregando cargas...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 3: EXECUÇÃO DE AUDITORIAS -->
+    <section id="mod-auditoria" class="modulo-content hidden space-y-6">
+      <div class="flex justify-between items-center border-b pb-4">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">Execução de Auditoria Rotativa</h1>
+          <p class="text-slate-500 text-sm">Contagem física, conferência de itens e fotos de não-conformidades</p>
+        </div>
+      </div>
+
+      <form id="auditForm" onsubmit="salvarItemAuditoria(event)" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+          <div>
+            <label class="block text-xs font-bold text-indigo-900 uppercase">ID da Auditoria (UUID)</label>
+            <input type="text" id="auditoriaId" class="w-full border p-2 rounded-lg text-sm bg-white" placeholder="ID Ativo" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-indigo-900 uppercase">Zona de Separação</label>
+            <input type="text" id="zonaSeparacao" class="w-full border p-2 rounded-lg text-sm bg-white" placeholder="Ex: ZONA-A" value="ZONA-A" required />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-indigo-900 uppercase">Plano / Aramado Nº</label>
+            <input type="number" id="planoNumero" value="1" class="w-full border p-2 rounded-lg text-sm bg-white" required />
+          </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label class="block text-sm font-medium text-slate-700">Código do Item</label>
-            <input type="text" id="codigoItem" class="w-full border border-slate-300 p-2 rounded" placeholder="Ex: PROD-123" required />
+            <input type="text" id="codigoItem" class="w-full border p-2 rounded-lg text-sm" placeholder="Ex: SK-7001" required />
           </div>
           <div>
             <label class="block text-sm font-medium text-slate-700">Descrição</label>
-            <input type="text" id="descricaoItem" class="w-full border border-slate-300 p-2 rounded" placeholder="Ex: Caixa de Papelão 20L" />
+            <input type="text" id="descricaoItem" class="w-full border p-2 rounded-lg text-sm" placeholder="Ex: Caixa Master 12x1L" />
           </div>
           <div>
             <label class="block text-sm font-medium text-slate-700">Conformidade</label>
-            <select id="conformidade" onchange="toggleDivergenciaSection()" class="w-full border border-slate-300 p-2 rounded bg-white">
-              <option value="conforme">Conforme</option>
-              <option value="nao_conforme">Não Conforme</option>
-              <option value="nao_aplicavel">N/A</option>
+            <select id="conformidade" onchange="toggleDivergenciaSection()" class="w-full border p-2 rounded-lg bg-white text-sm font-semibold">
+              <option value="conforme" class="text-emerald-600">✅ Conforme</option>
+              <option value="nao_conforme" class="text-rose-600">❌ Não Conforme</option>
+              <option value="nao_aplicavel" class="text-slate-500">⚪ N/A</option>
             </select>
           </div>
         </div>
@@ -84,30 +209,30 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-slate-700">Qtd. Esperada</label>
-            <input type="number" id="qtdEsperada" class="w-full border border-slate-300 p-2 rounded" required />
+            <input type="number" id="qtdEsperada" class="w-full border p-2 rounded-lg text-sm" required />
           </div>
           <div>
             <label class="block text-sm font-medium text-slate-700">Qtd. Contada</label>
-            <input type="number" id="qtdContada" class="w-full border border-slate-300 p-2 rounded" required />
+            <input type="number" id="qtdContada" class="w-full border p-2 rounded-lg text-sm" required />
           </div>
         </div>
 
-        <!-- ÁREA CONDICIONAL: TRATATIVA DE DIVERGÊNCIA -->
-        <div id="divergenciaArea" class="hidden bg-red-50 p-4 rounded-lg border border-red-200 space-y-4">
-          <h3 class="text-md font-bold text-red-800">Tratativa de Divergência Obrigatória</h3>
+        <!-- Tratar Divergência Obrigatória se 'nao_conforme' -->
+        <div id="divergenciaArea" class="hidden bg-rose-50 p-5 rounded-xl border border-rose-200 space-y-4">
+          <h3 class="text-sm font-bold text-rose-800 uppercase tracking-wider">Tratativa de Divergência Obrigatória</h3>
           
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label class="block text-sm font-medium text-slate-700">ID do Motivo</label>
-              <input type="text" id="motivoId" class="w-full border border-slate-300 p-2 rounded bg-white" placeholder="UUID do Motivo" />
+              <label class="block text-xs font-medium text-slate-700">Motivo Padronizado</label>
+              <select id="motivoId" class="w-full border p-2 rounded-lg bg-white text-sm"></select>
             </div>
             <div>
-              <label class="block text-sm font-medium text-slate-700">Responsável Operacional</label>
-              <input type="text" id="responsavelNome" class="w-full border border-slate-300 p-2 rounded bg-white" placeholder="Nome do operador" />
+              <label class="block text-xs font-medium text-slate-700">Responsável Operacional</label>
+              <input type="text" id="responsavelNome" class="w-full border p-2 rounded-lg bg-white text-sm" placeholder="Nome do conferente/separador" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-slate-700">Turno Responsável</label>
-              <select id="turnoResponsavel" class="w-full border border-slate-300 p-2 rounded bg-white">
+              <label class="block text-xs font-medium text-slate-700">Turno Responsável</label>
+              <select id="turnoResponsavel" class="w-full border p-2 rounded-lg bg-white text-sm">
                 <option value="turno_1">Turno 1</option>
                 <option value="turno_2">Turno 2</option>
                 <option value="turno_3">Turno 3</option>
@@ -118,68 +243,262 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-slate-700">Foto da Evidência</label>
-              <input type="file" id="fotoEvidencia" accept="image/*" class="w-full text-sm text-slate-500 border p-1 rounded bg-white" />
+              <label class="block text-xs font-medium text-slate-700">Foto da Evidência</label>
+              <input type="file" id="fotoEvidencia" accept="image/*" class="w-full text-xs text-slate-500 bg-white border p-1.5 rounded-lg" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-slate-700">Legenda da Imagem</label>
-              <input type="text" id="legendaFoto" class="w-full border border-slate-300 p-2 rounded bg-white" placeholder="Ex: Produto rasgado no palete" />
+              <label class="block text-xs font-medium text-slate-700">Legenda da Foto</label>
+              <input type="text" id="legendaFoto" class="w-full border p-2 rounded-lg bg-white text-sm" placeholder="Ex: Caixa amassada com vazamento" />
             </div>
           </div>
         </div>
 
-        <button type="submit" id="btnSalvar" class="w-full bg-slate-900 text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-800 transition">
-          Salvar Registro de Auditoria
+        <button type="submit" id="btnSalvarAudit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg text-sm transition">
+          Registrar Item na Auditoria
         </button>
       </form>
     </section>
 
-  </div>
+    <!-- MÓDULO 4: REGISTRO DE DIVERGÊNCIAS -->
+    <section id="mod-divergencias" class="modulo-content hidden space-y-6">
+      <div class="flex justify-between items-center border-b pb-4">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">Central de Gestão de Divergências</h1>
+          <p class="text-slate-500 text-sm">Acompanhamento de planos de ação e não-conformidades</p>
+        </div>
+        <button onclick="carregarDivergencias()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition">
+          🔄 Atualizar
+        </button>
+      </div>
 
-  <!-- SCRIPT DE LÓGICA E CONEXÃO -->
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b bg-slate-50 text-slate-600">
+                <th class="p-3">Data</th>
+                <th class="p-3">Motivo</th>
+                <th class="p-3">Responsável</th>
+                <th class="p-3">Turno</th>
+                <th class="p-3">Status</th>
+                <th class="p-3">Evidência</th>
+                <th class="p-3 text-right">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-divergencias">
+              <tr><td colspan="7" class="p-4 text-center text-slate-400">Carregando divergências...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 5: CONFIGURAÇÕES -->
+    <section id="mod-configuracoes" class="modulo-content hidden space-y-6">
+      <div class="flex justify-between items-center border-b pb-4">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">Configurações & Parâmetros</h1>
+          <p class="text-slate-500 text-sm">Gestão de Unidades Operacionais e Motivos de Divergência</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Motivos de Divergência -->
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-lg font-bold text-slate-800 border-b pb-2">Motivos Padronizados</h2>
+          <form onsubmit="salvarMotivo(event)" class="flex space-x-2">
+            <input type="text" id="novoMotivoCodigo" placeholder="Código" class="w-1/3 border p-2 rounded-lg text-sm" required />
+            <input type="text" id="novoMotivoDesc" placeholder="Descrição da Falha" class="w-2/3 border p-2 rounded-lg text-sm" required />
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+              +
+            </button>
+          </form>
+          <ul id="lista-motivos-config" class="divide-y divide-slate-100 text-sm"></ul>
+        </div>
+
+        <!-- Unidades -->
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h2 class="text-lg font-bold text-slate-800 border-b pb-2">Unidades Operacionais</h2>
+          <form onsubmit="salvarUnidade(event)" class="flex space-x-2">
+            <input type="text" id="novaUnidadeCodigo" placeholder="Código" class="w-1/3 border p-2 rounded-lg text-sm" required />
+            <input type="text" id="novaUnidadeNome" placeholder="Nome da Unidade" class="w-2/3 border p-2 rounded-lg text-sm" required />
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+              +
+            </button>
+          </form>
+          <ul id="lista-unidades-config" class="divide-y divide-slate-100 text-sm"></ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- INTEGRATION SCRIPT                         -->
+  <!-- ========================================== -->
   <script>
-    // 1. CONFUGURAÇÃO DO SUPABASE
-    const SUPABASE_URL = "https://SEU_PROJETO.supabase.co"; // <--- COLOQUE SUA URL
-    const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_AQUI";        // <--- COLOQUE SUA CHAVE ANON
+    // 1. CONFIGURAÇÕES DO SUPABASE
+    const SUPABASE_URL = "https://SEU_PROJETO.supabase.co"; 
+    const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_AQUI"; 
     
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // 2. EXIBIR/OCULTAR CAMPOS DE DIVERGÊNCIA
+    // 2. CONTROLE DE NAVEGAÇÃO
+    function navegar(moduloId) {
+      document.querySelectorAll('.modulo-content').forEach(sec => sec.classList.add('hidden'));
+      const moduloAlvo = document.getElementById(`mod-${moduloId}`);
+      if (moduloAlvo) moduloAlvo.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-slate-800', 'text-white');
+        btn.classList.add('text-slate-300');
+      });
+
+      const btnAtivo = document.getElementById(`btn-${moduloId}`);
+      if (btnAtivo) {
+        btnAtivo.classList.add('bg-slate-800', 'text-white');
+        btnAtivo.classList.remove('text-slate-300');
+      }
+
+      // Lazy Data Loading por Módulo
+      if (moduloId === 'indicadores') carregarDashboard();
+      if (moduloId === 'cargas') carregarCargas();
+      if (moduloId === 'divergencias') carregarDivergencias();
+      if (moduloId === 'configuracoes') carregarConfiguracoes();
+    }
+
     function toggleDivergenciaSection() {
       const conformidade = document.getElementById('conformidade').value;
-      const divergenciaArea = document.getElementById('divergenciaArea');
+      const area = document.getElementById('divergenciaArea');
       if (conformidade === 'nao_conforme') {
-        divergenciaArea.classList.remove('hidden');
+        area.classList.remove('hidden');
       } else {
-        divergenciaArea.classList.add('hidden');
+        area.classList.add('hidden');
       }
     }
 
-    // 3. CARREGAR INDICADORES DA VIEW SQL
+    // 3. MÓDULO INDICADORES
     async function carregarDashboard() {
-      const { data, error } = await supabaseClient
-        .from('v_kpis_dashboard')
-        .select('*')
-        .maybeSingle();
+      const { data: kpi } = await supabaseClient.from('v_kpis_dashboard').select('*').maybeSingle();
+      if (kpi) {
+        document.getElementById('kpi-score').innerText = (kpi.score_medio_qualidade || 0) + '%';
+        document.getElementById('kpi-auditorias').innerText = kpi.total_auditorias_concluidas || 0;
+        document.getElementById('kpi-divergencias').innerText = kpi.total_divergencias || 0;
 
-      if (error) {
-        console.error("Erro ao buscar KPIs:", error);
+        const total = kpi.total_divergencias || 1;
+        document.getElementById('txt-t1').innerText = kpi.divergencias_turno_1 || 0;
+        document.getElementById('bar-t1').style.width = `${((kpi.divergencias_turno_1 || 0) / total) * 100}%`;
+
+        document.getElementById('txt-t2').innerText = kpi.divergencias_turno_2 || 0;
+        document.getElementById('bar-t2').style.width = `${((kpi.divergencias_turno_2 || 0) / total) * 100}%`;
+
+        document.getElementById('txt-t3').innerText = kpi.divergencias_turno_3 || 0;
+        document.getElementById('bar-t3').style.width = `${((kpi.divergencias_turno_3 || 0) / total) * 100}%`;
+      }
+
+      // Motivos recorrentes
+      const { data: divs } = await supabaseClient.from('divergencias').select('motivos_divergencia(descricao)');
+      const listaEl = document.getElementById('lista-motivos-kpi');
+      listaEl.innerHTML = '';
+      
+      if (divs && divs.length > 0) {
+        const contagem = {};
+        divs.forEach(d => {
+          const desc = d.motivos_divergencia?.descricao || 'Outros';
+          contagem[desc] = (contagem[desc] || 0) + 1;
+        });
+
+        Object.entries(contagem).forEach(([motivo, qtd]) => {
+          listaEl.innerHTML += `
+            <li class="py-2 flex justify-between items-center">
+              <span>${motivo}</span>
+              <span class="bg-rose-100 text-rose-700 font-bold px-2 py-0.5 rounded-full text-xs">${qtd} ocorrência(s)</span>
+            </li>
+          `;
+        });
+      } else {
+        listaEl.innerHTML = '<li class="py-2 text-slate-400 italic">Nenhum registro encontrado.</li>';
+      }
+    }
+
+    // 4. MÓDULO CARGAS
+    async function carregarCargas() {
+      // Popular Select de Unidades
+      const { data: unidades } = await supabaseClient.from('unidades').select('*').eq('ativa', true);
+      const selectUnidade = document.getElementById('cargaUnidadeId');
+      selectUnidade.innerHTML = unidades?.map(u => `<option value="${u.id}">${u.nome}</option>`).join('') || '';
+
+      // Tabela de Cargas
+      const { data: cargas } = await supabaseClient.from('cargas').select('*').order('created_at', { ascending: false });
+      const tbody = document.getElementById('tabela-cargas');
+      tbody.innerHTML = '';
+
+      if (cargas && cargas.length > 0) {
+        cargas.forEach(c => {
+          tbody.innerHTML += `
+            <tr class="border-b hover:bg-slate-50">
+              <td class="p-3 font-semibold">${c.codigo_carga}</td>
+              <td class="p-3">${c.nota_fiscal || '-'}</td>
+              <td class="p-3">${c.transportadora || '-'}</td>
+              <td class="p-3"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs uppercase">${c.status}</span></td>
+              <td class="p-3 text-right">
+                <button onclick="iniciarAuditoria('${c.id}', '${c.unidade_id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded text-xs font-bold">
+                  Auditar
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">Nenhuma carga cadastrada.</td></tr>';
+      }
+    }
+
+    async function salvarCarga(e) {
+      e.preventDefault();
+      await supabaseClient.from('cargas').insert([{
+        unidade_id: document.getElementById('cargaUnidadeId').value,
+        codigo_carga: document.getElementById('codigoCarga').value,
+        nota_fiscal: document.getElementById('notaFiscal').value,
+        transportadora: document.getElementById('transportadora').value
+      }]);
+      document.getElementById('formCarga').reset();
+      carregarCargas();
+    }
+
+    async function iniciarAuditoria(cargaId, unidadeId) {
+      // Simula auditoria ativa (pega usuário mock ou cria registro)
+      const { data: user } = await supabaseClient.from('usuarios').select('id').limit(1).maybeSingle();
+      
+      if (!user) {
+        alert('É necessário ter ao menos um usuário cadastrado na tabela "usuarios".');
         return;
       }
 
-      if (data) {
-        document.getElementById('kpi-score').innerText = (data.score_medio_qualidade || 0) + '%';
-        document.getElementById('kpi-auditorias').innerText = data.total_auditorias_concluidas || 0;
-        document.getElementById('kpi-divergencias').innerText = data.total_divergencias || 0;
+      const { data: aud } = await supabaseClient.from('auditorias').insert([{
+        carga_id: cargaId,
+        auditor_id: user.id,
+        unidade_id: unidadeId,
+        zona_separacao: 'ZONA-A'
+      }]).select().single();
+
+      if (aud) {
+        document.getElementById('auditoriaId').value = aud.id;
+        navegar('auditoria');
       }
     }
 
-    // 4. PROCESSAR O ENVIO DO FORMULÁRIO
-    document.getElementById('auditForm').addEventListener('submit', async (e) => {
+    // 5. MÓDULO AUDITORIA (EXECUÇÃO)
+    async function carregarMotivosSelect() {
+      const { data: motivos } = await supabaseClient.from('motivos_divergencia').select('*').eq('ativo', true);
+      const sel = document.getElementById('motivoId');
+      sel.innerHTML = motivos?.map(m => `<option value="${m.id}">${m.descricao}</option>`).join('') || '';
+    }
+
+    async function salvarItemAuditoria(e) {
       e.preventDefault();
-      const btn = document.getElementById('btnSalvar');
-      btn.innerText = "Gravando dados...";
-      btn.disabled = true;
+      const btn = document.getElementById('btnSalvarAudit');
+      btn.innerText = "Salvando..."; btn.disabled = true;
 
       try {
         const auditoriaId = document.getElementById('auditoriaId').value;
@@ -190,84 +509,136 @@
         const qtdEsperada = document.getElementById('qtdEsperada').value;
         const qtdContada = document.getElementById('qtdContada').value;
 
-        // Step A: Inserir Item
-        const { data: itemData, error: itemError } = await supabaseClient
-          .from('itens_auditoria')
-          .insert([{
-            auditoria_id: auditoriaId,
-            plano_numero: Number(planoNumero),
-            codigo_item: codigoItem,
-            descricao: descricao,
-            quantidade_esperada: Number(qtdEsperada),
-            quantidade_contada: Number(qtdContada),
-            conformidade: conformidade
-          }])
-          .select()
-          .single();
+        // 1. Grava Item
+        const { data: itemData, error: itemErr } = await supabaseClient.from('itens_auditoria').insert([{
+          auditoria_id: auditoriaId,
+          plano_numero: Number(planoNumero),
+          codigo_item: codigoItem,
+          descricao: descricao,
+          quantidade_esperada: Number(qtdEsperada),
+          quantidade_contada: Number(qtdContada),
+          conformidade: conformidade
+        }]).select().single();
 
-        if (itemError) throw itemError;
+        if (itemErr) throw itemErr;
 
-        // Step B: Se Não Conforme, cria a Divergência e faz Upload da foto
+        // 2. Se Não Conforme, grava Divergência e Imagem
         if (conformidade === 'nao_conforme') {
-          const motivoId = document.getElementById('motivoId').value;
-          const responsavelNome = document.getElementById('responsavelNome').value;
-          const turnoResponsavel = document.getElementById('turnoResponsavel').value;
+          const { data: divData, error: divErr } = await supabaseClient.from('divergencias').insert([{
+            item_auditoria_id: itemData.id,
+            auditoria_id: auditoriaId,
+            motivo_id: document.getElementById('motivoId').value,
+            responsavel_nome: document.getElementById('responsavelNome').value,
+            turno_responsavel: document.getElementById('turnoResponsavel').value
+          }]).select().single();
+
+          if (divErr) throw divErr;
+
           const fileInput = document.getElementById('fotoEvidencia');
-          const legenda = document.getElementById('legendaFoto').value;
-
-          const { data: divData, error: divError } = await supabaseClient
-            .from('divergencias')
-            .insert([{
-              item_auditoria_id: itemData.id,
-              auditoria_id: auditoriaId,
-              motivo_id: motivoId,
-              responsavel_nome: responsavelNome,
-              turno_responsavel: turnoResponsavel
-            }])
-            .select()
-            .single();
-
-          if (divError) throw divError;
-
-          // Upload do arquivo para o Bucket
           if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
             const filePath = `evidencias/${auditoriaId}/${itemData.id}_${Date.now()}.${file.name.split('.').pop()}`;
 
-            const { error: uploadError } = await supabaseClient.storage
-              .from('evidencias-auditoria')
-              .upload(filePath, file);
-
-            if (uploadError) throw uploadError;
-
-            const { data: publicUrlData } = supabaseClient.storage
-              .from('evidencias-auditoria')
-              .getPublicUrl(filePath);
+            await supabaseClient.storage.from('evidencias-auditoria').upload(filePath, file);
+            const { data: pubUrl } = supabaseClient.storage.from('evidencias-auditoria').getPublicUrl(filePath);
 
             await supabaseClient.from('fotos_evidencias').insert([{
               auditoria_id: auditoriaId,
               item_auditoria_id: itemData.id,
               divergencia_id: divData.id,
-              url_storage: publicUrlData.publicUrl,
-              legenda: legenda
+              url_storage: pubUrl.publicUrl,
+              legenda: document.getElementById('legendaFoto').value
             }]);
           }
         }
 
-        alert('Registro efetuado com sucesso!');
+        alert('Item registrado com sucesso!');
         document.getElementById('codigoItem').value = '';
         document.getElementById('descricaoItem').value = '';
-        carregarDashboard(); // Atualiza os números no topo
-
+        document.getElementById('qtdEsperada').value = '';
+        document.getElementById('qtdContada').value = '';
       } catch (err) {
-        alert('Erro ao salvar: ' + err.message);
+        alert('Erro ao salvar auditoria: ' + err.message);
       } finally {
-        btn.innerText = "Salvar Registro de Auditoria";
-        btn.disabled = false;
+        btn.innerText = "Registrar Item na Auditoria"; btn.disabled = false;
       }
-    });
+    }
 
-    // Executa ao carregar a página
+    // 6. MÓDULO DIVERGÊNCIAS
+    async function carregarDivergencias() {
+      const { data: divs } = await supabaseClient.from('divergencias').select(`
+        *,
+        motivos_divergencia(descricao),
+        fotos_evidencias(url_storage, legenda)
+      `).order('created_at', { ascending: false });
+
+      const tbody = document.getElementById('tabela-divergencias');
+      tbody.innerHTML = '';
+
+      if (divs && divs.length > 0) {
+        divs.forEach(d => {
+          const foto = d.fotos_evidencias?.[0];
+          tbody.innerHTML += `
+            <tr class="border-b hover:bg-slate-50">
+              <td class="p-3 text-xs text-slate-500">${new Date(d.created_at).toLocaleDateString()}</td>
+              <td class="p-3 font-semibold">${d.motivos_divergencia?.descricao || 'Outro'}</td>
+              <td class="p-3">${d.responsavel_nome}</td>
+              <td class="p-3 uppercase text-xs">${d.turno_responsavel}</td>
+              <td class="p-3"><span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded text-xs font-bold">${d.status}</span></td>
+              <td class="p-3">
+                ${foto ? `<a href="${foto.url_storage}" target="_blank" class="text-indigo-600 underline text-xs">📷 Ver Foto</a>` : '-'}
+              </td>
+              <td class="p-3 text-right">
+                <button onclick="resolverDivergencia('${d.id}')" class="bg-emerald-600 text-white px-2 py-1 rounded text-xs font-bold">
+                  Concluir
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-400">Nenhuma divergência registrada.</td></tr>';
+      }
+    }
+
+    async function resolverDivergencia(id) {
+      await supabaseClient.from('divergencias').update({ status: 'resolvida' }).eq('id', id);
+      carregarDivergencias();
+    }
+
+    // 7. MÓDULO CONFIGURAÇÕES
+    async function carregarConfiguracoes() {
+      const { data: motivos } = await supabaseClient.from('motivos_divergencia').select('*');
+      const listaM = document.getElementById('lista-motivos-config');
+      listaM.innerHTML = motivos?.map(m => `<li class="py-2 flex justify-between"><span>${m.descricao}</span><span class="font-mono text-slate-400 text-xs">${m.codigo}</span></li>`).join('') || '';
+
+      const { data: unidades } = await supabaseClient.from('unidades').select('*');
+      const listaU = document.getElementById('lista-unidades-config');
+      listaU.innerHTML = unidades?.map(u => `<li class="py-2 flex justify-between"><span>${u.nome}</span><span class="font-mono text-slate-400 text-xs">${u.codigo}</span></li>`).join('') || '';
+    }
+
+    async function salvarMotivo(e) {
+      e.preventDefault();
+      await supabaseClient.from('motivos_divergencia').insert([{
+        codigo: document.getElementById('novoMotivoCodigo').value,
+        descricao: document.getElementById('novoMotivoDesc').value,
+        categoria: 'Geral'
+      }]);
+      carregarConfiguracoes();
+      carregarMotivosSelect();
+    }
+
+    async function salvarUnidade(e) {
+      e.preventDefault();
+      await supabaseClient.from('unidades').insert([{
+        codigo: document.getElementById('novaUnidadeCodigo').value,
+        nome: document.getElementById('novaUnidadeNome').value
+      }]);
+      carregarConfiguracoes();
+    }
+
+    // INICIALIZAÇÃO
+    carregarMotivosSelect();
     carregarDashboard();
   </script>
 </body>
